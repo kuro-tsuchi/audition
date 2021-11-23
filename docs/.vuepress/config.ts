@@ -1,17 +1,17 @@
 import { defineUserConfig } from 'vuepress'
-import type { MixThemeConfig } from 'vuepress-theme-mix/lib/node'
-export default defineUserConfig<MixThemeConfig>({
+// import type { MixThemeConfig } from 'vuepress-theme-mix/lib/node'
+export default defineUserConfig({
   lang: 'en-EN',
   title: '你好， VuePress ！',
   description: '这是我的第一个 VuePress 站点',
-  theme: 'vuepress-theme-mix',
+  // theme: 'vuepress-theme-mix',
   themeConfig: {
     logo: '/assets/images/Flag-map-of-taiwan.png',
     mode: 'auto',
     navbar: [
       // 一个内链导航项，导航至 /zh/README.md
       {
-        text: 'homePage',
+        text: 'home',
         link: '/',
       },
       // 或（此种情况下，系统根据文档内的一级标题自动生成菜单名称）
@@ -43,34 +43,35 @@ export default defineUserConfig<MixThemeConfig>({
         ],
       },
     ],
-    sidebar: [
-      // 导航至 /zh/guide/README.md，导航名称自动生成。
-      '/zh/guide/',
+    sidebar: {
+      // 一个独立的侧边栏
+      // '/zh/guide/': [
+      //   'README.md', // 支持相对路径
+      //   'getting-started.md',
+      //   'appearance.md',
+      //   'navbar.md',
+      //   'sidebar.md',
+      //   {
+      //     type: 'group',
+      //     text: '编写文档',
+      //     link: 'writing-content/',
+      //     children: ['markdown.md', 'typography.md'],
+      //   },
+      // ],
 
-      // 上面的写法等效于：
-      // {
-      //   type: 'link',
-      //   text: '自定义的导航名称',
-      //   link: '/zh/guide/',
-      // },
+      // // 另一个独立的侧边栏
+      // '/zh/api/': [
+      //   // 数组风格的子导航项
+      // ],
 
-      // 导航组
-      {
-        type: 'group',
-        text: '编写文档',
-        link: '/guide/zh/writing-content/',
-        children: ['markdown.md', 'typography.md'], // 子项支持相对路径
-        collapsible: false, // 是否可以折叠（可选）
-      },
-
-      // 导航链接组
-      {
-        type: 'link-group',
-        text: '编程语言',
-        link: '/guide/programming-languages/', // 导航自 /guide/zh/programming-languages/README.md
-        children: ['php.md', 'php.md'], // 子项支持相对路径
-        collapsible: true, // 是否可以折叠（可选）
-      },
-    ],
+      '/java': [
+        {
+          type: 'group',
+          text: 'spring',
+          link: '/spring',
+          children: ['one', 'two', 'three'],
+        },
+      ],
+    },
   },
 })
