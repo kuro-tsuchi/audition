@@ -1,4 +1,0 @@
----
-navbar: false
----
-# test golang
