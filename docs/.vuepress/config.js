@@ -1,9 +1,8 @@
-
 module.exports = {
   lang: 'en-EN',
   title: '努力! 奋斗！',
   description: '',
-  port:9000,
+  port: 9000,
   themeConfig: {
     logo: '/assets/images/Flag-map-of-taiwan.png',
     navbar: [
@@ -12,33 +11,46 @@ module.exports = {
         link: '/',
       },
       {
-        text: 'java',
-        link:'/java/',
+        text: "principle",
+        link: "/principle/",
         children: [
           {
-            text: '基础',
-            link: '/java/basic/',
+            text: "basic",
+            link: "/principle/basic",
           },
           {
-            text: '集合',
-            link: '/java/collection/',
+            text: "collection",
+            link: "/principle/collection",
           },
           {
-            text: '虚拟机',
-            link: '/java/jvm/',
+            text: "multithreading",
+            link: "/principle/multithreading",
           },
           {
-            text: '多线程',
-            link: '/java/multithreading/',
+            text: "jvm",
+            link: "/principle/jvm",
           },
         ],
       },
+      {
+        text: "spring",
+        link: "/spring/",
+      },
+      {
+        text: 'interview',
+        link: '/interview',
+      },
     ],
     sidebar: {
-      '/java/': [
+      "/principle/": [
         {
-          text: 'java',
-          children: ['basic','collection', 'jvm','multithreading'],
+          text: "principle",
+          children: [
+            "basic",
+            "collection",
+            "multithreading",
+            "jvm",
+          ],
         },
       ],
     },
