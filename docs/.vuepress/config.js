@@ -1,46 +1,59 @@
-
 module.exports = {
-  lang: 'en-EN',
-  title: '努力! 奋斗！',
-  description: '',
-  port:9000,
+  lang: "en-EN",
+  title: "工作记录",
+  description: "这是我的第一个 VuePress 站点",
+  port: 9000,
+
+  // theme: 'vuepress-theme-mix',
   themeConfig: {
-    logo: '/assets/images/Flag-map-of-taiwan.png',
+    // sidebar: 'auto',
+    logo: "/assets/images/Flag-map-of-taiwan.png",
     navbar: [
+      // 一个内链导航项，导航至 /zh/README.md
       {
-        text: 'home',
-        link: '/',
+        text: "home",
+        link: "/",
       },
       {
-        text: 'java',
-        link:'/java/',
+        text: "principle",
+        link: "/principle/",
         children: [
           {
-            text: '基础',
-            link: '/java/basic/',
+            text: "basic",
+            link: "/principle/basic",
           },
           {
-            text: '集合',
-            link: '/java/collection/',
+            text: "collection",
+            link: "/principle/collection",
           },
           {
-            text: '虚拟机',
-            link: '/java/jvm/',
+            text: "multithreading",
+            link: "/principle/multithreading",
           },
           {
-            text: '多线程',
-            link: '/java/multithreading/',
+            text: "jvm",
+            link: "/principle/jvm",
           },
         ],
       },
+      {
+        text: "spring",
+        link: "/spring/",
+      },
     ],
+
     sidebar: {
-      '/java/': [
+      "/principle/": [
         {
-          text: 'java',
-          children: ['basic','collection', 'jvm','multithreading'],
+          text: "principle",
+          children: [
+            "basic",
+            "collection",
+            "multithreading",
+            "jvm",
+          ],
         },
       ],
     },
   },
-}
+};
