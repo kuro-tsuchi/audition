@@ -101,7 +101,7 @@ JDK 8 版本之后方法区（HotSpot 的永久代）被彻底移除了（JDK1.7
 >
 > ```c++
 > uint ageTable::compute_tenuring_threshold(size_t survivor_capacity) {
-> 	//survivor_capacity是survivor空间的大小
+>  //survivor_capacity是survivor空间的大小
 > size_t desired_survivor_size = (size_t)((((double) survivor_capacity)*TargetSurvivorRatio)/100);
 > size_t total = 0;
 > uint age = 1;
@@ -111,7 +111,7 @@ JDK 8 版本之后方法区（HotSpot 的永久代）被彻底移除了（JDK1.7
 >  age++;
 > }
 > uint result = age < MaxTenuringThreshold ? age : MaxTenuringThreshold;
-> 	...
+>  ...
 > }
 >
 > ```
@@ -180,7 +180,7 @@ JDK 1.8 的时候，方法区（HotSpot 的永久代）被彻底移除了（JDK1
 > 2. JDK1.7 字符串常量池被从方法区拿到了堆中, 这里没有提到运行时常量池,也就是说字符串常量池被单独拿到堆,运行时常量池剩下的东西还在方法区, 也就是 hotspot 中的永久代 。
 > 3. JDK1.8 hotspot 移除了永久代用元空间(Metaspace)取而代之, 这时候字符串常量池还在堆, 运行时常量池还在方法区, 只不过方法区的实现从永久代变成了元空间(Metaspace)
 
-相关问题：JVM 常量池中存储的是对象还是引用呢？： https://www.zhihu.com/question/57109429/answer/151717241 by RednaxelaFX
+相关问题：JVM 常量池中存储的是对象还是引用呢？： <https://www.zhihu.com/question/57109429/answer/151717241> by RednaxelaFX
 
 ## 1.8. 直接内存
 
@@ -263,7 +263,7 @@ Java 堆是垃圾收集器管理的主要区域，因此也被称作 GC 堆（Ga
 >
 > ```c++
 > uint ageTable::compute_tenuring_threshold(size_t survivor_capacity) {
-> 	//survivor_capacity是survivor空间的大小
+>  //survivor_capacity是survivor空间的大小
 > size_t desired_survivor_size = (size_t)((((double) survivor_capacity)*TargetSurvivorRatio)/100);
 > size_t total = 0;
 > uint age = 1;
@@ -273,7 +273,7 @@ Java 堆是垃圾收集器管理的主要区域，因此也被称作 GC 堆（Ga
 > age++;
 > }
 > uint result = age < MaxTenuringThreshold ? age : MaxTenuringThreshold;
-> 	...
+>  ...
 > }
 >
 > ```
@@ -295,11 +295,11 @@ Java 堆是垃圾收集器管理的主要区域，因此也被称作 GC 堆（Ga
 ```java
 public class GCTest {
 
-	public static void main(String[] args) {
-		byte[] allocation1, allocation2;
-		allocation1 = new byte[30900*1024];
-		//allocation2 = new byte[900*1024];
-	}
+ public static void main(String[] args) {
+  byte[] allocation1, allocation2;
+  allocation1 = new byte[30900*1024];
+  //allocation2 = new byte[900*1024];
+ }
 }
 ```
 
@@ -326,14 +326,14 @@ allocation2 = new byte[900*1024];
 ```java
 public class GCTest {
 
-	public static void main(String[] args) {
-		byte[] allocation1, allocation2,allocation3,allocation4,allocation5;
-		allocation1 = new byte[32000*1024];
-		allocation2 = new byte[1000*1024];
-		allocation3 = new byte[1000*1024];
-		allocation4 = new byte[1000*1024];
-		allocation5 = new byte[1000*1024];
-	}
+ public static void main(String[] args) {
+  byte[] allocation1, allocation2,allocation3,allocation4,allocation5;
+  allocation1 = new byte[32000*1024];
+  allocation2 = new byte[1000*1024];
+  allocation3 = new byte[1000*1024];
+  allocation4 = new byte[1000*1024];
+  allocation5 = new byte[1000*1024];
+ }
 }
 
 ```
@@ -362,7 +362,7 @@ public class GCTest {
 >
 > ```c++
 > uint ageTable::compute_tenuring_threshold(size_t survivor_capacity) {
-> 	//survivor_capacity是survivor空间的大小
+>  //survivor_capacity是survivor空间的大小
 > size_t desired_survivor_size = (size_t)((((double) survivor_capacity)*TargetSurvivorRatio)/100);
 > size_t total = 0;
 > uint age = 1;
@@ -372,7 +372,7 @@ public class GCTest {
 > age++;
 > }
 > uint result = age < MaxTenuringThreshold ? age : MaxTenuringThreshold;
-> 	...
+>  ...
 > }
 >
 > ```
