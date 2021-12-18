@@ -35,7 +35,7 @@ Redis 提供了多种数据类型来支持不同的业务场景.Redis 还支持�
 
 ## 1.4. 缓存数据的处理流程是怎样的?
 
-![picture 1](../.vuepress/public/assets/images/1639830237323.png)  
+![picture 1](../.vuepress/public/assets/images/1639830237323.png)
 
 简单来说就是:
 
@@ -48,7 +48,7 @@ Redis 提供了多种数据类型来支持不同的业务场景.Redis 还支持�
 
 来说使用缓存主要是为了提升用户体验以及应对更多的用户.
 
-![picture 2](../.vuepress/public/assets/images/1639830292827.png)  
+![picture 2](../.vuepress/public/assets/images/1639830292827.png)
 
 ### 1.5.1. 高性能
 
@@ -68,27 +68,20 @@ Redis 提供了多种数据类型来支持不同的业务场景.Redis 还支持�
 
 ## 1.6. Redis 除了做缓存,还能做什么?
 
-- 分布式锁 : 通过 Redis 来做分布式锁是一种比较常见的方式.通常情况下,我们都是基于 Redisson 来实现分布式锁.相关阅读:[<分布式锁中的王者方案 - Redisson>](https://mp.weixin.qq.com/s/CbnPRfvq4m1sqo2uKI6qQw).
-- 限流 :一般是通过 Redis + Lua 脚本的方式来实现限流.相关阅读:[<我司用了 6 年的 Redis 分布式限流器,可以说是非常厉害了!>](https://mp.weixin.qq.com/s/kyFAWH3mVNJvurQDt4vchA).
-- 消息队列 :Redis 自带的 list 数据结构可以作为一个简单的队列使用.Redis5.0 中增加的 Stream 类型的数据结构更加适合用来做消息队列.它比较类似于 Kafka,有主题和消费组的概念,支持消息持久化以及 ACK 机制.
-- 复杂业务场景 :通过 Redis 以及 Redis 扩展(比如 Redisson)提供的数据结构,我们可以很方便地完成很多复杂的业务场景比如通过 bitmap 统计活跃用户,通过 sorted set 维护排行榜.
-- ......
+1. 分布式锁 : 通过 Redis 来做分布式锁是一种比较常见的方式.通常情况下,我们都是基于 Redisson 来实现分布式锁
+1. 限流 :一般是通过 Redis + Lua 脚本的方式来实现限流
+1. 消息队列 :Redis 自带的 list 数据结构可以作为一个简单的队列使用.Redis5.0 中增加的 Stream 类型的数据结构更加适合用来做消息队列.它比较类似于 Kafka,有主题和消费组的概念,支持消息持久化以及 ACK 机制.
+1. 复杂业务场景 :通过 Redis 以及 Redis 扩展(比如 Redisson)提供的数据结构,我们可以很方便地完成很多复杂的业务场景比如通过 bitmap 统计活跃用户,通过 sorted set 维护排行榜.
 
 ## 1.7. Redis 常见数据结构以及使用场景分析
 
-你可以自己本机安装 redis 或者通过 redis 官网提供的[在线 redis 环境](https://try.redis.io/).
-
-![try-redis](./images/redis-all/try-redis.png)
-
 ### 1.7.1. string
 
-1. 介绍 :string 数据结构是简单的 key-value 类型.虽然 Redis 是用 C 语言写的,但是 Redis 并没有使用 C 的字符串表示,而是自己构建了一种 简单动态字符串(simple dynamic string,SDS).相比于 C 的原生字符串,Redis 的 SDS 不光可以保存文本数据还可以保存二进制数据,并且获取字符串长度复杂度为 O(1)(C 字符串为 O(N)),除此之外,Redis 的 SDS API 是安全的,不会造成缓冲区溢出.
+1. 介绍 :string 数据结构是简单的 key-value 类型
 2. 常用命令: `set,get,strlen,exists,decr,incr,setex` 等等.
-3. 应用场景: 一般常用在需要计数的场景,比如用户的访问次数,热点文章的点赞转发数量等等.
+3. 应用场景: 存储信息, 计数器
 
-下面我们简单看看它的使用!
-
-普通字符串的基本操作:
+#### 1.7.1.1. 普通字符串的基本操作
 
 ```bash
 127.0.0.1:6379> set key value #设置 key-value 类型的值
@@ -105,7 +98,7 @@ OK
 (nil)
 ```
 
-批量设置 :
+#### 1.7.1.2. 批量设置
 
 ```bash
 127.0.0.1:6379> mset key1 value1 key2 value2 # 批量设置 key-value 类型的值
@@ -115,7 +108,7 @@ OK
 2) "value2"
 ```
 
-计数器(字符串的内容为整数的时候可以使用):
+#### 1.7.1.3. 计数器(字符串的内容为整数的时候可以使用)
 
 ```bash
 127.0.0.1:6379> set number 1
@@ -130,7 +123,7 @@ OK
 "1"
 ```
 
-过期(默认为永不过期):
+#### 1.7.1.4. 过期(默认为永不过期)
 
 ```bash
 127.0.0.1:6379> expire key  60 # 数据在 60s 后过期
@@ -143,13 +136,11 @@ OK
 
 ### 1.7.2. list
 
-1. 介绍 :list 即是 链表.链表是一种非常常见的数据结构,特点是易于数据元素的插入和删除并且可以灵活调整链表长度,但是链表的随机访问困难.许多高级编程语言都内置了链表的实现比如 Java 中的 LinkedList,但是 C 语言并没有实现链表,所以 Redis 实现了自己的链表数据结构.Redis 的 list 的实现为一个 双向链表,即可以支持反向查找和遍历,更方便操作,不过带来了部分额外的内存开销.
+1. 介绍 :list 即是 链表.链表是一种非常常见的数据结构,特点是易于数据元素的插入和删除并且可以灵活调整链表长度,但是链表的随机访问困难.
 2. 常用命令: `rpush,lpop,lpush,rpop,lrange,llen` 等.
 3. 应用场景: 发布与订阅或者说消息队列,慢查询.
 
-下面我们简单看看它的使用!
-
-通过 `rpush/lpop` 实现队列:
+#### 1.7.2.1. 通过 `rpush/lpop` 实现队列
 
 ```bash
 127.0.0.1:6379> rpush myList value1 # 向 list 的头部(右边)添加元素
@@ -166,7 +157,7 @@ OK
 2) "value3"
 ```
 
-通过 `rpush/rpop` 实现栈:
+#### 1.7.2.2. 通过 `rpush/rpop` 实现栈
 
 ```bash
 127.0.0.1:6379> rpush myList2 value1 value2 value3
@@ -175,11 +166,9 @@ OK
 "value3"
 ```
 
-我专门画了一个图方便小伙伴们来理解:
+![picture 3](../.vuepress/public/assets/images/1639832056184.png)  
 
-![redis list](./images/redis-all/redis-list.png)
-
-通过 `lrange` 查看对应下标范围的列表元素:
+#### 1.7.2.3. 通过 `lrange` 查看对应下标范围的列表元素
 
 ```bash
 127.0.0.1:6379> rpush myList value1 value2 value3
@@ -195,7 +184,7 @@ OK
 
 通过 `lrange` 命令,你可以基于 list 实现分页查询,性能非常高!
 
-通过 `llen` 查看链表长度:
+#### 1.7.2.4. 通过 `llen` 查看链表长度
 
 ```bash
 127.0.0.1:6379> llen myList
@@ -204,11 +193,8 @@ OK
 
 ### 1.7.3. hash
 
-1. 介绍 :hash 类似于 JDK1.8 前的 HashMap,内部实现也差不多(数组 + 链表).不过,Redis 的 hash 做了更多优化.另外,hash 是一个 string 类型的 field 和 value 的映射表,特别适合用于存储对象,后续操作的时候,你可以直接仅仅修改这个对象中的某个字段的值. 比如我们可以 hash 数据结构来存储用户信息,商品信息等等.
+1. hash 是一个 string 类型的 field 和 value 的映射表,特别适合用于存储对象
 2. 常用命令: `hset,hmset,hexists,hget,hgetall,hkeys,hvals` 等.
-3. 应用场景: 系统中对象数据的存储.
-
-下面我们简单看看它的使用!
 
 ```bash
 127.0.0.1:6379> hmset userInfoKey name "guide" description "dev" age "24"
@@ -241,11 +227,8 @@ OK
 
 ### 1.7.4. set
 
-1. 介绍 : set 类似于 Java 中的 `HashSet` .Redis 中的 set 类型是一种无序集合,集合中的元素没有先后顺序.当你需要存储一个列表数据,又不希望出现重复数据时,set 是一个很好的选择,并且 set 提供了判断某个成员是否在一个 set 集合内的重要接口,这个也是 list 所不能提供的.可以基于 set 轻易实现交集,并集,差集的操作.比如:你可以将一个用户所有的关注人存在一个集合中,将其所有粉丝存在一个集合.Redis 可以非常方便的实现如共同关注,共同粉丝,共同喜好等功能.这个过程也就是求交集的过程.
+1. 介绍 : Redis 中的 set 类型是一种无序集合
 2. 常用命令: `sadd,spop,smembers,sismember,scard,sinterstore,sunion` 等.
-3. 应用场景: 需要存放的数据不能重复以及需要获取多个数据源交集和并集等场景
-
-下面我们简单看看它的使用!
 
 ```bash
 127.0.0.1:6379> sadd mySet value1 value2 # 添加元素进去
@@ -269,9 +252,8 @@ OK
 
 ### 1.7.5. sorted set
 
-1. 介绍: 和 set 相比,sorted set 增加了一个权重参数 score,使得集合中的元素能够按 score 进行有序排列,还可以通过 score 的范围来获取元素的列表.有点像是 Java 中 HashMap 和 TreeSet 的结合体.
+1. 介绍: 和 set 相比,sorted set 增加了一个权重参数 score,使得集合中的元素能够按 score 进行有序排列,还可以通过 score 的范围来获取元素的列表.
 2. 常用命令: `zadd,zcard,zscore,zrange,zrevrange,zrem` 等.
-3. 应用场景: 需要对数据根据某个权重进行排序的场景.比如在直播系统中,实时排行信息包含直播间在线用户列表,各种礼物排行榜,弹幕消息(可以理解为按消息维度的消息排行榜)等信息.
 
 ```bash
 127.0.0.1:6379> zadd myZset 3.0 value1 # 添加元素到 sorted set 中 3.0 为权重
@@ -294,93 +276,13 @@ OK
 2) "value2"
 ```
 
-### 1.7.6. bitmap
-
-1. 介绍: bitmap 存储的是连续的二进制数字(0 和 1),通过 bitmap, 只需要一个 bit 位来表示某个元素对应的值或者状态,key 就是对应元素本身 .我们知道 8 个 bit 可以组成一个 byte,所以 bitmap 本身会极大的节省储存空间.
-2. 常用命令: `setbit` ,`getbit` ,`bitcount`,`bitop`
-3. 应用场景: 适合需要保存状态信息(比如是否签到,是否登录...)并需要进一步对这些信息进行分析的场景.比如用户签到情况,活跃用户情况,用户行为统计(比如是否点赞过某个视频).
-
-```bash
-# SETBIT 会返回之前位的值(默认是 0)这里会生成 7 个位
-127.0.0.1:6379> setbit mykey 7 1
-(integer) 0
-127.0.0.1:6379> setbit mykey 7 0
-(integer) 1
-127.0.0.1:6379> getbit mykey 7
-(integer) 0
-127.0.0.1:6379> setbit mykey 6 1
-(integer) 0
-127.0.0.1:6379> setbit mykey 8 1
-(integer) 0
-# 通过 bitcount 统计被被设置为 1 的位的数量.
-127.0.0.1:6379> bitcount mykey
-(integer) 2
-```
-
-针对上面提到的一些场景,这里进行进一步说明.
-
-使用场景一:用户行为分析
-很多网站为了分析你的喜好,需要研究你点赞过的内容.
-
-```bash
-# 记录你喜欢过 001 号小姐姐
-127.0.0.1:6379> setbit beauty_girl_001 uid 1
-```
-
-使用场景二:统计活跃用户
-
-使用时间作为 key,然后用户 ID 为 offset,如果当日活跃过就设置为 1
-
-那么我该如何计算某几天/月/年的活跃用户呢(暂且约定,统计时间内只要有一天在线就称为活跃),有请下一个 redis 的命令
-
-```bash
-# 对一个或多个保存二进制位的字符串 key 进行位元操作,并将结果保存到 destkey 上.
-# BITOP 命令支持 AND , OR , NOT , XOR 这四种操作中的任意一种参数
-BITOP operation destkey key [key ...]
-```
-
-初始化数据:
-
-```bash
-127.0.0.1:6379> setbit 20210308 1 1
-(integer) 0
-127.0.0.1:6379> setbit 20210308 2 1
-(integer) 0
-127.0.0.1:6379> setbit 20210309 1 1
-(integer) 0
-```
-
-统计 20210308~20210309 总活跃用户数: 1
-
-```bash
-127.0.0.1:6379> bitop and desk1 20210308 20210309
-(integer) 1
-127.0.0.1:6379> bitcount desk1
-(integer) 1
-```
-
-统计 20210308~20210309 在线活跃用户数: 2
-
-```bash
-127.0.0.1:6379> bitop or desk2 20210308 20210309
-(integer) 1
-127.0.0.1:6379> bitcount desk2
-(integer) 2
-```
-
-使用场景三:用户在线状态
-
-对于获取或者统计用户在线状态,使用 bitmap 是一个节约空间且效率又高的一种方法.
-
-只需要一个 key,然后用户 ID 为 offset,如果在线就设置为 1,不在线就设置为 0.
-
 ## 1.8. Redis 单线程模型详解
 
 Redis 基于 Reactor 模式来设计开发了自己的一套高效的事件处理模型 (Netty 的线程模型也基于 Reactor 模式,Reactor 模式不愧是高性能 IO 的基石),这套事件处理模型对应的是 Redis 中的文件事件处理器(file event handler).由于文件事件处理器(file event handler)是单线程方式运行的,所以我们一般都说 Redis 是单线程模型.
 
 既然是单线程,那怎么监听大量的客户端连接呢?
 
-Redis 通过IO 多路复用程序 来监听来自客户端的大量连接(或者说是监听多个 socket),它会将感兴趣的事件及类型(读,写)注册到内核中并监听每个事件是否发生.
+Redis 通过 IO 多路复用程序 来监听来自客户端的大量连接(或者说是监听多个 socket),它会将感兴趣的事件及类型(读,写)注册到内核中并监听每个事件是否发生.
 
 这样的好处非常明显: I/O 多路复用技术的使用让 Redis 不需要额外创建多余的线程来监听客户端的大量连接,降低了资源的消耗(和 NIO 中的 `Selector` 组件很像).
 
@@ -409,18 +311,6 @@ Redis 通过IO 多路复用程序 来监听来自客户端的大量连接(或者
 
 ## 1.9. Redis 没有使用多线程?为什么不使用多线程?
 
-虽然说 Redis 是单线程模型,但是,实际上,Redis 在 4.0 之后的版本中就已经加入了对多线程的支持.
-
-![redis4.0 more thread](images/redis-all/redis4.0-more-thread.png)
-
-不过,Redis 4.0 增加的多线程主要是针对一些大键值对的删除操作的命令,使用这些命令就会使用主处理之外的其他线程来"异步处理".
-
-大体上来说,Redis 6.0 之前主要还是单线程处理.
-
-那,Redis6.0 之前 为什么不使用多线程?
-
-我觉得主要原因有下面 3 个:
-
 1. 单线程编程容易并且更容易维护;
 2. Redis 的性能瓶颈不在 CPU ,主要在内存和网络;
 3. 多线程就会存在死锁,线程上下文切换等问题,甚至会影响性能.
@@ -431,26 +321,9 @@ Redis6.0 引入多线程主要是为了提高网络 IO 读写性能,因为这个
 
 虽然,Redis6.0 引入了多线程,但是 Redis 的多线程只是在网络数据的读写这类耗时操作上使用了,执行命令仍然是单线程顺序执行.因此,你也不需要担心线程安全问题.
 
-Redis6.0 的多线程默认是禁用的,只使用主线程.如需开启需要修改 redis 配置文件 `redis.conf` :
-
-```bash
-io-threads-do-reads yes
-```
-
-开启多线程后,还需要设置线程数,否则是不生效的.同样需要修改 redis 配置文件 `redis.conf` :
-
-```bash
-io-threads 4 #官网建议4核的机器建议设置为2或3个线程,8核的建议设置为6个线程
-```
-
-推荐阅读:
-
-1. [Redis 6.0 新特性-多线程连环 13 问!](https://mp.weixin.qq.com/s/FZu3acwK6zrCBZQ_3HoUgw)
-2. [为什么 Redis 选择单线程模型](https://draveness.me/whys-the-design-redis-single-thread/)
+Redis6.0 的多线程默认是禁用的
 
 ## 1.11. Redis 给缓存数据设置过期时间有啥用?
-
-一般情况下,我们设置保存的缓存数据的时候都会设置一个过期时间.为什么呢?
 
 因为内存是有限的,如果缓存中的所有数据都是一直保存的话,分分钟直接 Out of memory.
 
@@ -467,7 +340,7 @@ OK
 
 注意:Redis 中除了字符串类型有自己独有设置过期时间的命令 `setex` 外,其他方法都需要依靠 `expire` 命令来设置过期时间 .另外, `persist` 命令可以移除一个键的过期时间.
 
-过期时间除了有助于缓解内存的消耗,还有什么其他用么?
+#### 1.11.1. 过期时间除了有助于缓解内存的消耗,还有什么其他用么?
 
 很多时候,我们的业务场景就是需要某个数据只在某一时间段内存在,比如我们的短信验证码可能只在 1 分钟内有效,用户登录的 token 可能只在 1 天内有效.
 
