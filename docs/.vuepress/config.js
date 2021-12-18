@@ -11,30 +11,44 @@ module.exports = {
         link: '/',
       },
       {
-        text: "principle",
-        link: "/principle/",
+        text: 'principle',
+        link: '/principle/',
         children: [
           {
-            text: "basic",
-            link: "/principle/basic",
+            text: 'basic',
+            link: '/principle/basic',
           },
           {
-            text: "collection",
-            link: "/principle/collection",
+            text: 'collection',
+            link: '/principle/collection',
           },
           {
-            text: "multithreading",
-            link: "/principle/multithreading",
+            text: 'multithreading',
+            link: '/principle/multithreading',
           },
           {
-            text: "jvm",
-            link: "/principle/jvm",
+            text: 'jvm',
+            link: '/principle/jvm',
           },
         ],
       },
       {
-        text: "spring",
-        link: "/spring/",
+        text: 'spring',
+        link: '/spring/',
+      },
+      {
+        text: 'database',
+        link: '/database/',
+        children: [
+          {
+            text: 'mysql',
+            link: '/database/mysql',
+          },
+          {
+            text: 'redis',
+            link: '/database/redis',
+          },
+        ],
       },
       {
         text: 'interview',
@@ -42,15 +56,17 @@ module.exports = {
       },
     ],
     sidebar: {
-      "/principle/": [
+      '/principle/': [
         {
-          text: "principle",
-          children: [
-            "basic",
-            "collection",
-            "multithreading",
-            "jvm",
-          ],
+          text: 'principle',
+          children: ['basic', 'collection', 'multithreading', 'jvm'],
+        },
+      ],
+
+      '/database/': [
+        {
+          text: 'database',
+          children: ['mysql', 'redis'],
         },
       ],
     },
