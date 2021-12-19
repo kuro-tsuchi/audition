@@ -35,6 +35,20 @@ module.exports = {
       {
         text: 'spring',
         link: '/spring/',
+        children: [
+          {
+            text: 'springboot',
+            link: '/spring/springboot',
+          },
+          {
+            text: 'mybatis',
+            link: '/spring/mybatis',
+          },
+          {
+            text: 'springcloud',
+            link: '/spring/springcloud',
+          },
+        ],
       },
       {
         text: 'database',
@@ -52,7 +66,7 @@ module.exports = {
       },
       {
         text: 'interview',
-        link: '/interview',
+        link: '/interview/',
       },
     ],
     sidebar: {
@@ -60,6 +74,13 @@ module.exports = {
         {
           text: 'principle',
           children: ['basic', 'collection', 'multithreading', 'jvm'],
+        },
+      ],
+
+      '/spring/': [
+        {
+          text: 'spring',
+          children: ['springboot', 'mybatis', 'springcloud'],
         },
       ],
 

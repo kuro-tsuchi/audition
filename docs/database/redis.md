@@ -290,7 +290,7 @@ Redis 通过 IO 多路复用程序 来监听来自客户端的大量连接(或�
 
 时间事件不需要多花时间了解,我们接触最多的还是 文件事件(客户端进行读取写入等操作,涉及一系列网络通信).
 
-<Redis 设计与实现>有一段话是如是介绍文件事件的,我觉得写得挺不错.
+<!-- <Redis 设计与实现>有一段话是如是介绍文件事件的,我觉得写得挺不错. -->
 
 > Redis 基于 Reactor 模式开发了自己的网络事件处理器:这个处理器被称为文件事件处理器(file event handler).文件事件处理器使用 I/O 多路复用(multiplexing)程序来同时监听多个套接字,并根据套接字目前执行的任务来为套接字关联不同的事件处理器.
 >
@@ -307,7 +307,7 @@ Redis 通过 IO 多路复用程序 来监听来自客户端的大量连接(或�
 
 ![](images/redis-all/redis事件处理器.png)
 
-<p style="text-align:right; font-size:14px; color:gray"><Redis设计与实现:12章></p>
+<!-- <p style="text-align:right; font-size:14px; color:gray"><Redis设计与实现:12章></p> -->
 
 ## 1.9. Redis 没有使用多线程?为什么不使用多线程?
 
@@ -547,7 +547,7 @@ Redis 官网也解释了自己为啥不支持回滚.简单来说就是 Redis 开
 
 如下图所示,用户的请求最终都要跑到数据库中查询一遍.
 
-![缓存穿透情况](./images/redis-all/缓存穿透情况.png)
+<!-- ![缓存穿透情况](./images/redis-all/缓存穿透情况.png) -->
 
 ### 1.17.3. 有哪些解决办法?
 
@@ -648,11 +648,3 @@ Cache Aside Pattern 中遇到写请求是这样的:更新 DB,然后直接删除 
 
 1. 缓存失效时间变短(不推荐,治标不治本) :我们让缓存数据的过期时间变短,这样的话缓存就会从数据库中加载数据.另外,这种解决办法对于先操作缓存后操作数据库的场景不适用.
 2. 增加 cache 更新重试机制(常用): 如果 cache 服务当前不可用导致缓存删除失败的话,我们就隔一段时间进行重试,重试次数可以自己定.如果多次重试还是失败的话,我们可以把当前更新失败的 key 存入队列中,等缓存服务可用之后,再将缓存中对应的 key 删除即可.
-
-## 1.20. 参考
-
-- <Redis 开发与运维>
-- <Redis 设计与实现>
-- Redis 命令总结:<http://Redisdoc.com/string/set.html>
-- 通俗易懂的 Redis 数据结构基础教程:[https://juejin.im/post/5b53ee7e5188251aaa2d2e16](https://juejin.im/post/5b53ee7e5188251aaa2d2e16)
-- WHY Redis choose single thread (vs multi threads): [https://medium.com/@jychen7/sharing-redis-single-thread-vs-multi-threads-5870bd44d153](https://medium.com/@jychen7/sharing-redis-single-thread-vs-multi-threads-5870bd44d153)
