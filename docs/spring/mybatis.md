@@ -7,7 +7,7 @@
 
 ## 1.2. Xml 映射文件中,除了常见的 select|insert|update|delete 标签之外,还有哪些标签?
 
-还有很多其他的标签, `<resultMap> , <parameterMap> , <sql> , <include> , <selectKey>` ,加上动态 sql 的 9 个标签, trim|where|set|foreach|if|choose|when|otherwise|bind 等,其中 <sql> 为 sql 片段标签,通过 <include> 标签引入 sql 片段, <selectKey> 为不支持自增的主键生成策略标签.
+还有很多其他的标签, `<resultMap> , <parameterMap> , <sql> , <include> , <selectKey>` ,加上动态 sql 的 9 个标签, trim|where|set|foreach|if|choose|when|otherwise|bind 等,其中 `<sql>` 为 sql 片段标签,通过 `<include>` 标签引入 sql 片段, `<selectKey>` 为不支持自增的主键生成策略标签.
 
 ## 1.3. 最佳实践中,通常一个 Xml 映射文件,都会写一个 Dao 接口与之对应,请问,这个 Dao 接口的工作原理是什么?Dao 接口里的方法,参数不同时,方法能重载吗?
 

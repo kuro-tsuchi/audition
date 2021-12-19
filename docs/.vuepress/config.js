@@ -11,24 +11,24 @@ module.exports = {
         link: '/',
       },
       {
-        text: 'principle',
-        link: '/principle/',
+        text: 'java',
+        link: '/java/',
         children: [
           {
             text: 'basic',
-            link: '/principle/basic',
+            link: '/java/basic',
           },
           {
             text: 'collection',
-            link: '/principle/collection',
+            link: '/java/collection',
           },
           {
             text: 'multithreading',
-            link: '/principle/multithreading',
+            link: '/java/multithreading',
           },
           {
             text: 'jvm',
-            link: '/principle/jvm',
+            link: '/java/jvm',
           },
         ],
       },
@@ -65,14 +65,32 @@ module.exports = {
         ],
       },
       {
+        text: 'mq',
+        link: '/mq/',
+        children: [
+          {
+            text: 'summary',
+            link: '/mq/summary',
+          },
+          {
+            text: 'kafka',
+            link: '/mq/kafka',
+          },
+          {
+            text: 'rocketmq',
+            link: '/mq/rocketmq',
+          },
+        ],
+      },
+      {
         text: 'interview',
         link: '/interview/',
       },
     ],
     sidebar: {
-      '/principle/': [
+      '/java/': [
         {
-          text: 'principle',
+          text: 'java',
           children: ['basic', 'collection', 'multithreading', 'jvm'],
         },
       ],
@@ -88,6 +106,12 @@ module.exports = {
         {
           text: 'database',
           children: ['mysql', 'redis'],
+        },
+      ],
+      '/mq/': [
+        {
+          text: 'mq',
+          children: ['summary', 'rocketmq', 'kafka'],
         },
       ],
     },
