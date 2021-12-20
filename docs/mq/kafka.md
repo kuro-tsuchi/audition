@@ -84,7 +84,7 @@ Kafka 为分区(Partition)引入了多副本(Replica)机制.分区(Partition)中
 
 ## 1.6. Zookeeper 在 Kafka 中的作用知道吗?
 
-<img src="https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-11/zookeeper-kafka.jpg" style="zoom:50%;" />
+![picture 3](../.vuepress/public/assets/images/1639958942125.png)  
 
 ZooKeeper 主要为 Kafka 提供元数据的管理的功能.
 
@@ -95,27 +95,28 @@ ZooKeeper 主要为 Kafka 提供元数据的管理的功能.
 ## 1.7. Kafka 如何保证消息的消费顺序?
 
 > 我们在使用消息队列的过程中经常有业务场景需要严格保证消息的消费顺序,比如我们同时发了 2 个消息,这 2 个消息对应的操作分别对应的数据库操作是:
+>>
+>> 1. 更改用户会员等级.
+>> 2. 根据会员等级计算订单价格.
 >
-> 1. 更改用户会员等级.
-> 2. 根据会员等级计算订单价格.
->    假如这两条消息的消费顺序不一样造成的最终结果就会截然不同.
+> 假如这两条消息的消费顺序不一样造成的最终结果就会截然不同.
 
 Kafka 中 Partition(分区)是真正保存消息的地方,我们发送的消息都被放在了这里.而我们的 Partition(分区) 又存在于 Topic(主题) 这个概念中,并且我们可以给特定 Topic 指定多个 Partition.
-
-![](https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-11/KafkaTopicPartionsLayout.png)
+![picture 4](../.vuepress/public/assets/images/1639959183217.png)  
 
 每次添加消息到 Partition(分区) 的时候都会采用尾加法,如上图所示. Kafka 只能为我们保证 Partition(分区) 中的消息有序.
 
 > 消息在被追加到 Partition(分区)的时候都会分配一个特定的偏移量(offset).Kafka 通过偏移量(offset)来保证消息在分区内的顺序性.
 
-所以,我们就有一种很简单的保证消息消费顺序的方法:1 个 Topic 只对应一个 Partition.这样当然可以解决问题,但是破坏了 Kafka 的设计初衷.
-
-Kafka 中发送 1 条消息的时候,可以指定 topic, partition, key,data(数据) 4 个参数.如果你发送消息的时候指定了 Partition 的话,所有消息都会被发送到指定的 Partition.并且,同一个 key 的消息可以保证只发送到同一个 partition,这个我们可以采用表/对象的 id 来作为 key .
-
-总结一下,对于如何保证 Kafka 中消息消费的顺序,有了下面两种方法:
+### 1.7.1. 保证消息消费顺序的方法
 
 1. 1 个 Topic 只对应一个 Partition.
-2. (推荐)发送消息的时候指定 key/Partition.
+
+    这样当然可以解决问题,但是破坏了 Kafka 的设计初衷.
+
+1. (推荐)   发送消息的时候指定 key/Partition.
+
+    Kafka 中发送 1 条消息的时候,可以指定 topic, partition, key,data(数据) 4 个参数.如果你发送消息的时候指定了 Partition 的话,所有消息都会被发送到指定的 Partition.并且,同一个 key 的消息可以保证只发送到同一个 partition,这个我们可以采用表/对象的 id 来作为 key .
 
 ## 1.8. Kafka 如何保证消息不丢失
 
@@ -143,19 +144,19 @@ future.addCallback(result -> logger.info("生产者成功发送消息到topic:{}
 
 如果消息发送失败的话,我们检查失败的原因之后重新发送即可!
 
-另外这里推荐为 Producer 的`retries`(重试次数)设置一个比较合理的值,一般是 3 ,但是为了保证消息不丢失的话一般会设置比较大一点.设置完成之后,当出现网络问题之后能够自动重试消息发送,避免消息丢失.另外,建议还要设置重试间隔,因为间隔太小的话重试的效果就不明显了,网络波动一次你 3 次一下子就重试完了
+另外这里推荐为 Producer 的`retries`(重试次数)设置一个比较合理的值,一般是 3 ,但是为了保证消息不丢失的话一般会设置比较大一点.设置完成之后,当出现网络问题之后能够自动重试消息发送,避免消息丢失.另外,建议还要设置重试间隔,因为间隔太小的话重试的效果就不明显了,网络波动一次你 3 次很快就重试完了
 
 ### 1.8.2. 消费者丢失消息的情况
 
 我们知道消息在被追加到 Partition(分区)的时候都会分配一个特定的偏移量(offset).偏移量(offset)表示 Consumer 当前消费到的 Partition(分区)的所在的位置.Kafka 通过偏移量(offset)可以保证消息在分区内的顺序性.
 
-![kafka offset](https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-11/kafka-offset.jpg)
+![picture 5](../.vuepress/public/assets/images/1639959542954.png)  
 
 当消费者拉取到了分区的某个消息之后,消费者会自动提交了 offset.自动提交的话会有一个问题,试想一下,当消费者刚拿到这个消息准备进行真正消费的时候,突然挂掉了,消息实际上并没有被消费,但是 offset 却被自动提交了.
 
 解决办法也比较粗暴,我们手动关闭自动提交 offset,每次在真正消费完消息之后再自己手动提交 offset . 但是,细心的朋友一定会发现,这样会带来消息被重新消费的问题.比如你刚刚消费完消息之后,还没提交 offset,结果自己挂掉了,那么这个消息理论上就会被消费两次.
 
-### 1.8.3. Kafka 弄丢了消息
+### 1.8.3. Kafka 消息丢失
 
 我们知道 Kafka 为分区(Partition)引入了多副本(Replica)机制.分区(Partition)中的多个副本之间会有一个叫做 leader 的家伙,其他副本称为 follower.我们发送的消息会被发送到 leader 副本,然后 follower 副本才能从 leader 副本中拉取消息进行同步.生产者和消费者只与 leader 副本交互.你可以理解为其他副本只是 leader 副本的拷贝,它们的存在只是为了保证消息存储的安全性.
 
@@ -195,7 +196,7 @@ acks 的默认值即为 1,代表我们的消息被 leader 副本接收之后就�
 1. 消费消息服务做幂等校验,比如 Redis 的 set,MySQL 的主键等天然的幂等功能.这种方法最有效.
 1. 将 `enable.auto.commit` 参数设置为 false,关闭自动提交,开发者在代码中手动提交 offset.
 
-### 1.9.3 什么时候提交 offset 合适?
+### 1.9.3. 什么时候提交 offset 合适?
 
 1. 处理完消息再提交:依旧有消息重复消费的风险,和自动提交一样
 1. 拉取到消息即提交:会有消息丢失的风险.允许消息延时的场景,一般会采用这种方式.然后,通过定时任务在业务不繁忙(比如凌晨)的时候做数据兜底.
