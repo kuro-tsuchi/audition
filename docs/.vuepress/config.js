@@ -51,6 +51,21 @@ module.exports = {
         ],
       },
       {
+        text: 'microservice',
+        link: '/microservice/',
+        children: [
+          {
+            text: 'zookeeper',
+            link: '/microservice/zookeeper',
+          },
+          {
+            text: 'dubbo',
+            link: '/microservice/dubbo',
+          },
+        ],
+      },
+
+      {
         text: 'database',
         link: '/database/',
         children: [
@@ -99,6 +114,13 @@ module.exports = {
         {
           text: 'spring',
           children: ['springboot', 'mybatis', 'springcloud'],
+        },
+      ],
+
+      '/microservice/': [
+        {
+          text: 'microservice',
+          children: ['zookeeper', 'dubbo'],
         },
       ],
 
