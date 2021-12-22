@@ -1,6 +1,6 @@
 module.exports = {
   lang: 'en-EN',
-  title: '努力! 奋斗！',
+  title: '努力！奋斗！',
   description: '',
   port: 9000,
   themeConfig: {
@@ -8,7 +8,7 @@ module.exports = {
     navbar: [
       {
         text: 'home',
-        link: '/',
+        link: '/interview/',
       },
       {
         text: 'java',
