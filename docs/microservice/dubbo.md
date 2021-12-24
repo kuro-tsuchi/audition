@@ -1,5 +1,5 @@
 ---
-navbar: false
+sidebar: false
 ---
 
 # 1. dubbo
