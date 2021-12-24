@@ -305,6 +305,9 @@ final 关键字主要用在三个地方：变量，方法，类。
 
 ## 1.29. Java 中的异常处理
 
+![picture 1](../.vuepress/public/assets/images/1640343884805.png)  
+![picture 2](../.vuepress/public/assets/images/1640343893506.png)  
+
 ### 1.29.1. Java 异常类层次结构图
 
 在 Java 中，所有的异常都有一个共同的祖先 java.lang 包中的 Throwable 类.Throwable 类有两个重要的子类 Exception(异常) 和 Error(错误).Exception 能被程序本身处理 (try-catch), Error 是无法处理的 (只能尽量避免).
@@ -317,8 +320,6 @@ Exception 和 Error 二者都是 Java 异常处理的重要子类，各自都包
 #### 1.29.1.1. 受检查异常
 
 Java 代码在编译过程中，如果受检查异常没有被 catch/throw 处理的话，就没办法通过编译 .比如下面这段 IO 操作的代码。
-
-![check-exception](https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/2020-12/check-exception.png)
 
 除了 RuntimeException 及其子类以外，其他的 Exception 类及其子类都属于检查异常 .常见的受检查异常有: IO 相关的异常，ClassNotFoundException ,SQLException....
 
@@ -378,24 +379,23 @@ String s = input.readLine();
 - 按照操作单元划分，可以划分为字节流和字符流;
 - 按照流的角色划分为节点流和处理流。
 
-Java Io 流共涉及 40 多个类，这些类看上去很杂乱，但实际上很有规则，而且彼此之间存在非常紧密的联系，Java I0 流的 40 多个类都是从如下 4 个抽象类基类中派生出来的。
+Java I0 流的 40 多个类都是从如下 4 个抽象类基类中派生出来的。
 
 - InputStream/Reader: 所有的输入流的基类，前者是字节输入流，后者是字符输入流。
 - OutputStream/Writer: 所有输出流的基类，前者是字节输出流，后者是字符输出流。
 
-按操作方式分类结构图：
+1. 按操作方式分类结构图：
+  ![picture 3](../.vuepress/public/assets/images/1640344046679.png)  
 
-![IO-操作方式分类](https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-6/IO-操作方式分类.png)
+1. 按操作对象分类结构图：
 
-按操作对象分类结构图：
-
-![IO-操作对象分类](https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-6/IO-操作对象分类.png)
+![picture 4](../.vuepress/public/assets/images/1640344068818.png)  
 
 ### 1.32.2. 既然有了字节流，为什么还要有字符流？
 
 问题本质想问：不管是文件读写还是网络发送接收，信息的最小存储单元都是字节，那为什么 I/O 流操作要分为字节流操作和字符流操作呢？
 
-回答：字符流是由 Java 虚拟机将字节转换得到的，问题就出在这个过程还算是非常耗时，并且，如果我们不知道编码类型就很容易出现乱码问题。所以，I/O 流就干脆提供了一个直接操作字符的接口，方便我们平时对字符进行流操作。如果音频文件，图片等媒体文件用字节流比较好，如果涉及到字符的话使用字符流比较好。
+字符流是由 Java 虚拟机将字节转换得到的，问题就出在这个过程还算是非常耗时，并且，如果我们不知道编码类型就很容易出现乱码问题。所以，I/O 流就干脆提供了一个直接操作字符的接口，方便我们平时对字符进行流操作。如果音频文件，图片等媒体文件用字节流比较好，如果涉及到字符的话使用字符流比较好。
 
 ### 1.32.3. BIO,NIO,AIO 有什么区别？
 
