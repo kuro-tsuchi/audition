@@ -74,7 +74,6 @@ module.exports = {
           },
         ],
       },
-
       {
         text: 'database',
         link: '/database/',
@@ -104,6 +103,17 @@ module.exports = {
           {
             text: 'rocketmq',
             link: '/mq/rocketmq',
+          },
+        ],
+      },
+
+      {
+        text: 'additional',
+        link: '/additional/',
+        children: [
+          {
+            text: 'linux',
+            link: '/additional/linux',
           },
         ],
       },
@@ -137,7 +147,7 @@ module.exports = {
       '/springcloud/': [
         {
           text: 'springcloud',
-          children: ['summary','nacos'],
+          children: ['summary', 'nacos'],
         },
       ],
 
@@ -151,6 +161,12 @@ module.exports = {
         {
           text: 'mq',
           children: ['summary', 'rocketmq', 'kafka'],
+        },
+      ],
+      '/additional/': [
+        {
+          text: 'additional',
+          children: ['linux'],
         },
       ],
     },
