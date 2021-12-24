@@ -159,7 +159,8 @@ pwd 显示工作路径
 ## 1.6. 打包和压缩文件
 
 1. tar 命令
-对文件进行打包，默认情况并不会压缩，如果指定了相应的参数，它还会调用相应的压缩程序（如 gzip 和 bzip 等）进行压缩和解压）推荐：250 期面试题汇总
+
+    对文件进行打包，默认情况并不会压缩，如果指定了相应的参数，它还会调用相应的压缩程序（如 gzip 和 bzip 等）进行压缩和解压）推荐：250 期面试题汇总
 
     ```bash
     -c ：新建打包文件
@@ -188,27 +189,27 @@ pwd 显示工作路径
 
 ## 1.7. 系统和关机 (系统的关机、重启以及登出 )
 
-    ```bash
-    shutdown -h now 关闭系统 (1)
-    init 0 关闭系统 (2)
-    telinit 0 关闭系统 (3)
-    shutdown -h hours:minutes & 按预定时间关闭系统
-    shutdown -c 取消按预定时间关闭系统
-    shutdown -r now 重启 (1)
-    reboot 重启 (2)
-    logout 注销
-    time 测算一个命令（即程序）的执行时间
-    ```
+```bash
+shutdown -h now 关闭系统 (1)
+init 0 关闭系统 (2)
+telinit 0 关闭系统 (3)
+shutdown -h hours:minutes & 按预定时间关闭系统
+shutdown -c 取消按预定时间关闭系统
+shutdown -r now 重启 (1)
+reboot 重启 (2)
+logout 注销
+time 测算一个命令（即程序）的执行时间
+```
 
 ## 1.8. 进程相关的命令
 
 1. jps 命令
-显示当前系统的 java 进程情况，及其 id 号
 
-jps(Java Virtual Machine Process Status Tool) 是 JDK 1.5 提供的一个显示当前所有 java 进程 pid 的命令，简单实用，非常适合在 linux/unix 平台上简单察看当前 java 进程的一些简单情况。
+   显示当前系统的 java 进程情况，及其 id 号
 
 1. ps 命令 (process)
-用于将某个时间点的进程运行情况选取下来并输出
+
+    用于将某个时间点的进程运行情况选取下来并输出
 
     ```bash
     -A ：所有的进程均显示出来
@@ -223,13 +224,16 @@ jps(Java Virtual Machine Process Status Tool) 是 JDK 1.5 提供的一个显示�
     ```
 
 1. kill 命令
-用于向某个工作（%jobnumber）或者是某个 PID（数字）传送一个信号，它通常与 ps 和 jobs 命令一起使用
+
+    用于向某个工作（%jobnumber）或者是某个 PID（数字）传送一个信号，它通常与 ps 和 jobs 命令一起使用
 
 1. killall 命令
-向一个命令启动的进程发送一个信号
+
+    向一个命令启动的进程发送一个信号
 
 1. top 命令
-Linux 下常用的性能分析工具，能够实时显示系统中各个进程的资源占用状况，类似于 Windows 的任务管理器。
+
+    Linux 下常用的性能分析工具，能够实时显示系统中各个进程的资源占用状况，类似于 Windows 的任务管理器。
 
 1. 如何杀死进程：
 
