@@ -3,7 +3,6 @@ module.exports = {
   title: '努力！奋斗！',
   description: '',
   port: 9000,
-  base: "/audition",
   themeConfig: {
     logo: '/assets/images/Flag-map-of-taiwan.png',
     navbar: [
