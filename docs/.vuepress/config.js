@@ -3,6 +3,7 @@ module.exports = {
   title: '努力！奋斗！',
   description: '',
   port: 9000,
+  base: "/audition",
   themeConfig: {
     logo: '/assets/images/Flag-map-of-taiwan.png',
     navbar: [
@@ -75,20 +76,6 @@ module.exports = {
         ],
       },
       {
-        text: 'database',
-        link: '/database/',
-        children: [
-          {
-            text: 'mysql',
-            link: '/database/mysql',
-          },
-          {
-            text: 'redis',
-            link: '/database/redis',
-          },
-        ],
-      },
-      {
         text: 'mq',
         link: '/mq/',
         children: [
@@ -103,6 +90,20 @@ module.exports = {
           {
             text: 'rocketmq',
             link: '/mq/rocketmq',
+          },
+        ],
+      },
+      {
+        text: 'database',
+        link: '/database/',
+        children: [
+          {
+            text: 'mysql',
+            link: '/database/mysql',
+          },
+          {
+            text: 'redis',
+            link: '/database/redis',
           },
         ],
       },
