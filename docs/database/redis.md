@@ -1,21 +1,21 @@
-<!-- ---
-sidebar: false
---- -->
+---
+sidebar:  false
+---
 # 1. redis
 
-## 1.1. 简单介绍一下 Redis 呗
+## 1.1. 简单介绍一下 Redis
 
-Redis 是一个使用 C 语言开发的数据库，Redis 的数据是存在内存中的，也就是它是内存数据库，所以读写速度非常快，因此 Redis 被广泛应用于缓存方向。
+Redis 是一个使用 C 语言开发的内存数据库数据库，Redis 的数据是存在内存中的，所以读写速度非常快，因此 Redis 被广泛应用于缓存方向。
 
 另外，Redis 除了做缓存之外，也经常用来做分布式锁，甚至是消息队列。
 
-Redis 提供了多种数据类型来支持不同的业务场景.Redis 还支持事务 ,持久化，Lua 脚本，多种集群方案。
+Redis 提供了多种数据类型来支持不同的业务场景. Redis 还支持事务，持久化，Lua 脚本，多种集群方案。
 
 ## 1.2. 分布式缓存常见的技术选型方案有哪些？
 
-分布式缓存的话，使用的比较多的主要是 Memcached 和 Redis.不过，现在基本是直接以 Redis 为主。
+分布式缓存的话，使用的比较多的主要是 Memcached 和 Redis. 不过，现在基本是直接以 Redis 为主。
 
-分布式缓存主要解决的是单机缓存的容量受服务器限制并且无法保存通用信息的问题。因为，本地缓存只在当前服务里有效，比如如果你部署了两个相同的服务，他们两者之间的缓存数据是无法互通的。
+分布式缓存主要解决的是单机缓存的容量受服务器限制并且无法保存通用信息的问题。因为，本地缓存只在当前服务里有效，比如部署了两个相同的服务，他们两者之间的缓存数据是无法互通的。
 
 ## 1.3. 说一下 Redis 和 Memcached 的区别和共同点
 
@@ -27,24 +27,18 @@ Redis 提供了多种数据类型来支持不同的业务场景.Redis 还支持�
 
 ### 1.3.2. 区别
 
-1. Redis 支持更丰富的数据类型 (支持更复杂的应用场景).
-
-   Redis 不仅仅支持简单的 k/v 类型的数据，同时还提供 list,set,zset,hash 等数据结构的存储.Memcached 只支持最简单的 k/v 数据类型。
-2. Redis 支持数据的持久化
-
-   可以将内存中的数据保持在磁盘中，重启的时候可以再次加载进行使用，而 Memecache 把数据全部存在内存之中。
+1. Redis 支持更丰富的数据类型 (支持更复杂的应用场景). Redis 不仅仅支持简单的 k/v 类型的数据，同时还提供 list, set, zset, hash 等数据结构的存储.Memcached 只支持最简单的 k/v 数据类型。
+2. Redis 支持数据的持久化，可以将内存中的数据保持在磁盘中，重启的时候可以再次加载进行使用，而 Memecache 把数据全部存在内存之中。
 3. Redis 有灾难恢复机制，可以把缓存中的数据持久化到磁盘上。
 4. Redis 在服务器内存使用完之后，可以将不用的数据放到磁盘上。但是，Memcached 在服务器内存使用完之后，就会直接报异常。
-5. Memcached 没有原生的集群模式，需要依靠客户端来实现往集群中分片写入数据;但是 Redis 目前是原生支持 cluster 模式的。
-6. Memcached 是多线程，非阻塞 IO 复用的网络模型;Redis 使用单线程的多路 IO 复用模型. (Redis 6.0 引入了多线程 IO )
+5. Redis 目前是原生支持 cluster 模式的，Memcached 没有原生的集群模式，需要依靠客户端来实现往集群中分片写入数据
+6. Redis 使用单线程的多路 IO 复用模型，Memcached 是多线程，非阻塞 IO 复用的网络模型
 7. Redis 支持发布订阅模型，Lua 脚本，事务等功能，而 Memcached 不支持。并且，Redis 支持更多的编程语言。
-8. Memcached 过期数据的删除策略只用了惰性删除，而 Redis 同时使用了惰性删除与定期删除。
+8. Redis 同时使用了惰性删除与定期删除，Memcached 过期数据的删除策略只用了惰性删除
 
 ## 1.4. 缓存数据的处理流程是怎样的？
 
 ![picture 1](../.vuepress/public/assets/images/1639830237323.png)
-
-简单来说就是：
 
 1. 如果用户请求的数据在缓存中就直接返回。
 2. 缓存中不存在的话就看数据库中是否存在。
@@ -57,58 +51,55 @@ Redis 提供了多种数据类型来支持不同的业务场景.Redis 还支持�
 
 ### 1.5.1. 高性能
 
-假如用户第一次访问数据库中的某些数据的话，这个过程是比较慢，毕竟是从硬盘中读取的。但是，如果说，用户访问的数据属于高频数据并且不会经常改变的话，那么就可以很放心地将该用户访问的数据存在缓存中。
+用户首次访问数据库中的某些数据是从硬盘中读取的，速度较慢，如果用户访问的数据属于高频数据并且不会经常改变的话，那么可以将用户访问的数据存在缓存中。保证用户下一次再访问这些数据的时候就可以直接从缓存中获取了。操作缓存就是直接操作内存，所以速度相当快。
 
-这样有什么好处呢？那就是保证用户下一次再访问这些数据的时候就可以直接从缓存中获取了。操作缓存就是直接操作内存，所以速度相当快。
-
-不过，要保持数据库和缓存中的数据的一致性。如果数据库中的对应数据改变的之后，同步改变缓存中相应的数据即可！
+不过，要保持数据库和缓存中的数据的一致性。如果数据库中的对应数据改变的之后，同步改变缓存中相应的数据
 
 ### 1.5.2. 高并发
 
-一般像 MySQL 这类的数据库的 QPS 大概都在 1w 左右 (4 核 8g) ,但是使用 Redis 缓存之后很容易达到 10w+,甚至最高能达到 30w+(就单机 redis 的情况，redis 集群的话会更高).
+MySQL 数据库的 QPS 大概都在 1w 左右 (4 核 8g) , 但是使用 Redis 缓存之后很容易达到 10w+, 甚至最高能达到 30w+( 此为 redis 单机的情况，redis 集群的话会更高).
 
-> QPS(Query Per Second):服务器每秒可以执行的查询次数;
-
-由此可见，直接操作缓存能够承受的数据库请求数量是远远大于直接访问数据库的，所以可以考虑把数据库中的部分数据转移到缓存中去，这样用户的一部分请求会直接到缓存这里而不用经过数据库。进而，也就提高了系统整体的并发。
+直接操作缓存能够承受的数据库请求数量是远远大于直接访问数据库的，所以可以考虑把数据库中的部分数据转移到缓存中去，这样用户的一部分请求会直接到缓存这里而不用经过数据库。进而，也就提高了系统整体的并发。
+> QPS(Query Per Second): 服务器每秒可以执行的查询次数;
 
 ## 1.6. Redis 除了做缓存，还能做什么？
 
-1. 分布式锁 : 通过 Redis 来做分布式锁是一种比较常见的方式。通常情况下，都是基于 Redisson 来实现分布式锁
-1. 限流 :一般是通过 Redis + Lua 脚本的方式来实现限流
-1. 消息队列 :Redis 自带的 list 数据结构可以作为一个简单的队列使用.Redis5.0 中增加的 Stream 类型的数据结构更加适合用来做消息队列。它比较类似于 Kafka，有主题和消费组的概念，支持消息持久化以及 ACK 机制。
-1. 复杂业务场景 :通过 Redis 以及 Redis 扩展 (比如 Redisson) 提供的数据结构，可以很方便地完成很多复杂的业务场景比如通过 bitmap 统计活跃用户，通过 sorted set 维护排行榜。
+1. 分布式锁：通过 Redis 来做分布式锁是一种比较常见的方式。通常情况下，都是基于 Redisson 来实现分布式锁
+1. 限流：一般是通过 Redis + Lua 脚本的方式来实现限流
+1. 消息队列:  Redis 自带的 list 数据结构可以作为一个简单的队列使用.Redis5.0 中增加的 Stream 类型的数据结构更加适合用来做消息队列。它比较类似于 Kafka，有主题和消费组的概念，支持消息持久化以及 ACK 机制。
+1. 复杂业务场景：通过 Redis 以及 Redis 扩展 (比如 Redisson) 提供的数据结构，可以很方便地完成很多复杂的业务场景，比如通过 bitmap 统计活跃用户，通过 sorted set 维护排行榜。
 
 ## 1.7. Redis 常见数据结构以及使用场景分析
 
 ### 1.7.1. string
 
-1. 介绍 :string 数据结构是简单的 key-value 类型
-2. 常用命令：set,get,strlen,exists,decr,incr,setex 等等。
+1. 介绍 : string 数据结构是简单的 key-value 类型
+2. 常用命令：set, get, strlen, exists, decr, incr, setex 等等。
 3. 应用场景：存储信息，计数器
 
 #### 1.7.1.1. 普通字符串的基本操作
 
 ```bash
-127.0.0.1:6379> set key value #设置 key-value 类型的值
+127.0.0.1: 6379> set key value #设置 key-value 类型的值
 OK
-127.0.0.1:6379> get key # 根据 key 获得对应的 value
+127.0.0.1: 6379> get key # 根据 key 获得对应的 value
 value
-127.0.0.1:6379> exists key  # 判断某个 key 是否存在
+127.0.0.1: 6379> exists key  # 判断某个 key 是否存在
 (integer) 1
-127.0.0.1:6379> strlen key # 返回 key 所储存的字符串值的长度。
+127.0.0.1: 6379> strlen key # 返回 key 所储存的字符串值的长度。
 (integer) 5
-127.0.0.1:6379> del key # 删除某个 key 对应的值
+127.0.0.1: 6379> del key # 删除某个 key 对应的值
 (integer) 1
-127.0.0.1:6379> get key
+127.0.0.1: 6379> get key
 (nil)
 ```
 
 #### 1.7.1.2. 批量设置
 
 ```bash
-127.0.0.1:6379> mset key1 value1 key2 value2 # 批量设置 key-value 类型的值
+127.0.0.1: 6379> mset key1 value1 key2 value2 # 批量设置 key-value 类型的值
 OK
-127.0.0.1:6379> mget key1 key2 # 批量获取多个 key 对应的 value
+127.0.0.1: 6379> mget key1 key2 # 批量获取多个 key 对应的 value
 1) value1
 2) value2
 ```
@@ -116,48 +107,48 @@ OK
 #### 1.7.1.3. 计数器 (字符串的内容为整数的时候可以使用)
 
 ```bash
-127.0.0.1:6379> set number 1
+127.0.0.1: 6379> set number 1
 OK
-127.0.0.1:6379> incr number # 将 key 中储存的数字值增一
+127.0.0.1: 6379> incr number # 将 key 中储存的数字值增一
 (integer) 2
-127.0.0.1:6379> get number
+127.0.0.1: 6379> get number
 2
-127.0.0.1:6379> decr number # 将 key 中储存的数字值减一
+127.0.0.1: 6379> decr number # 将 key 中储存的数字值减一
 (integer) 1
-127.0.0.1:6379> get number
+127.0.0.1: 6379> get number
 1
 ```
 
 #### 1.7.1.4. 过期 (默认为永不过期)
 
 ```bash
-127.0.0.1:6379> expire key  60 # 数据在 60s 后过期
+127.0.0.1: 6379> expire key  60 # 数据在 60s 后过期
 (integer) 1
-127.0.0.1:6379> setex key 60 value # 数据在 60s 后过期 (setex:[set] + [ex]pire)
+127.0.0.1: 6379> setex key 60 value # 数据在 60s 后过期 (setex: [set] + [ex]pire)
 OK
-127.0.0.1:6379> ttl key # 查看数据还有多久过期
+127.0.0.1: 6379> ttl key # 查看数据还有多久过期
 (integer) 56
 ```
 
 ### 1.7.2. list
 
-1. 介绍 :list 即是 链表。链表是一种非常常见的数据结构，特点是易于数据元素的插入和删除并且可以灵活调整链表长度，但是链表的随机访问困难。
-2. 常用命令：rpush,lpop,lpush,rpop,lrange,llen 等。
+1. 介绍 : list 即是 链表。链表是一种非常常见的数据结构，特点是易于数据元素的插入和删除并且可以灵活调整链表长度，但是链表的随机访问困难。
+2. 常用命令：rpush, lpop, lpush, rpop, lrange, llen 等。
 3. 应用场景：发布与订阅或者说消息队列，慢查询。
 
 #### 1.7.2.1. 通过 rpush/lpop 实现队列
 
 ```bash
-127.0.0.1:6379> rpush myList value1 # 向 list 的头部 (右边) 添加元素
+127.0.0.1: 6379> rpush myList value1 # 向 list 的头部 (右边) 添加元素
 (integer) 1
-127.0.0.1:6379> rpush myList value2 value3 # 向 list 的头部 (最右边) 添加多个元素
+127.0.0.1: 6379> rpush myList value2 value3 # 向 list 的头部 (最右边) 添加多个元素
 (integer) 3
-127.0.0.1:6379> lpop myList # 将 list 的尾部 (最左边) 元素取出
+127.0.0.1: 6379> lpop myList # 将 list 的尾部 (最左边) 元素取出
 value1
-127.0.0.1:6379> lrange myList 0 1 # 查看对应下标的 list 列表，0 为 start,1 为 end
+127.0.0.1: 6379> lrange myList 0 1 # 查看对应下标的 list 列表，0 为 start, 1 为 end
 1) value2
 2) value3
-127.0.0.1:6379> lrange myList 0 -1 # 查看列表中的所有元素，-1 表示倒数第一
+127.0.0.1: 6379> lrange myList 0 -1 # 查看列表中的所有元素，-1 表示倒数第一
 1) value2
 2) value3
 ```
@@ -165,9 +156,9 @@ value1
 #### 1.7.2.2. 通过 rpush/rpop 实现栈
 
 ```bash
-127.0.0.1:6379> rpush myList2 value1 value2 value3
+127.0.0.1: 6379> rpush myList2 value1 value2 value3
 (integer) 3
-127.0.0.1:6379> rpop myList2 # 将 list 的头部 (最右边) 元素取出
+127.0.0.1: 6379> rpop myList2 # 将 list 的头部 (最右边) 元素取出
 value3
 ```
 
@@ -176,12 +167,12 @@ value3
 #### 1.7.2.3. 通过 lrange 查看对应下标范围的列表元素
 
 ```bash
-127.0.0.1:6379> rpush myList value1 value2 value3
+127.0.0.1: 6379> rpush myList value1 value2 value3
 (integer) 3
-127.0.0.1:6379> lrange myList 0 1 # 查看对应下标的 list 列表，0 为 start,1 为 end
+127.0.0.1: 6379> lrange myList 0 1 # 查看对应下标的 list 列表，0 为 start, 1 为 end
 1) value1
 2) value2
-127.0.0.1:6379> lrange myList 0 -1 # 查看列表中的所有元素，-1 表示倒数第一
+127.0.0.1: 6379> lrange myList 0 -1 # 查看列表中的所有元素，-1 表示倒数第一
 1) value1
 2) value2
 3) value3
@@ -192,116 +183,116 @@ value3
 #### 1.7.2.4. 通过 llen 查看链表长度
 
 ```bash
-127.0.0.1:6379> llen myList
+127.0.0.1: 6379> llen myList
 (integer) 3
 ```
 
 ### 1.7.3. hash
 
 1. hash 是一个 string 类型的 field 和 value 的映射表，特别适合用于存储对象
-2. 常用命令：hset,hmset,hexists,hget,hgetall,hkeys,hvals 等。
+2. 常用命令：hset, hmset, hexists, hget, hgetall, hkeys, hvals 等。
 
 ```bash
-127.0.0.1:6379> hmset userInfoKey name guide description dev age 24
+127.0.0.1: 6379> hmset userInfoKey name guide description dev age 24
 OK
-127.0.0.1:6379> hexists userInfoKey name # 查看 key 对应的 value 中指定的字段是否存在。
+127.0.0.1: 6379> hexists userInfoKey name # 查看 key 对应的 value 中指定的字段是否存在。
 (integer) 1
-127.0.0.1:6379> hget userInfoKey name # 获取存储在哈希表中指定字段的值。
+127.0.0.1: 6379> hget userInfoKey name # 获取存储在哈希表中指定字段的值。
 guide
-127.0.0.1:6379> hget userInfoKey age
+127.0.0.1: 6379> hget userInfoKey age
 24
-127.0.0.1:6379> hgetall userInfoKey # 获取在哈希表中指定 key 的所有字段和值
+127.0.0.1: 6379> hgetall userInfoKey # 获取在哈希表中指定 key 的所有字段和值
 1) name
 2) guide
 3) description
 4) dev
 5) age
 6) 24
-127.0.0.1:6379> hkeys userInfoKey # 获取 key 列表
+127.0.0.1: 6379> hkeys userInfoKey # 获取 key 列表
 1) name
 2) description
 3) age
-127.0.0.1:6379> hvals userInfoKey # 获取 value 列表
+127.0.0.1: 6379> hvals userInfoKey # 获取 value 列表
 1) guide
 2) dev
 3) 24
-127.0.0.1:6379> hset userInfoKey name GuideGeGe # 修改某个字段对应的值
-127.0.0.1:6379> hget userInfoKey name
+127.0.0.1: 6379> hset userInfoKey name GuideGeGe # 修改某个字段对应的值
+127.0.0.1: 6379> hget userInfoKey name
 GuideGeGe
 ```
 
 ### 1.7.4. set
 
-1. 介绍 : Redis 中的 set 类型是一种无序集合
-2. 常用命令：sadd,spop,smembers,sismember,scard,sinterstore,sunion 等。
+1. 介绍 :  Redis 中的 set 类型是一种无序集合
+2. 常用命令：sadd, spop, smembers, sismember, scard, sinterstore, sunion 等。
 
 ```bash
-127.0.0.1:6379> sadd mySet value1 value2 # 添加元素进去
+127.0.0.1: 6379> sadd mySet value1 value2 # 添加元素进去
 (integer) 2
-127.0.0.1:6379> sadd mySet value1 # 不允许有重复元素
+127.0.0.1: 6379> sadd mySet value1 # 不允许有重复元素
 (integer) 0
-127.0.0.1:6379> smembers mySet # 查看 set 中所有的元素
+127.0.0.1: 6379> smembers mySet # 查看 set 中所有的元素
 1) value1
 2) value2
-127.0.0.1:6379> scard mySet # 查看 set 的长度
+127.0.0.1: 6379> scard mySet # 查看 set 的长度
 (integer) 2
-127.0.0.1:6379> sismember mySet value1 # 检查某个元素是否存在 set 中，只能接收单个元素
+127.0.0.1: 6379> sismember mySet value1 # 检查某个元素是否存在 set 中，只能接收单个元素
 (integer) 1
-127.0.0.1:6379> sadd mySet2 value2 value3
+127.0.0.1: 6379> sadd mySet2 value2 value3
 (integer) 2
-127.0.0.1:6379> sinterstore mySet3 mySet mySet2 # 获取 mySet 和 mySet2 的交集并存放在 mySet3 中
+127.0.0.1: 6379> sinterstore mySet3 mySet mySet2 # 获取 mySet 和 mySet2 的交集并存放在 mySet3 中
 (integer) 1
-127.0.0.1:6379> smembers mySet3
+127.0.0.1: 6379> smembers mySet3
 1) value2
 ```
 
 ### 1.7.5. sorted set
 
 1. 介绍：和 set 相比，sorted set 增加了一个权重参数 score，使得集合中的元素能够按 score 进行有序排列，还可以通过 score 的范围来获取元素的列表。
-2. 常用命令：zadd,zcard,zscore,zrange,zrevrange,zrem 等。
+2. 常用命令：zadd, zcard, zscore, zrange, zrevrange, zrem 等。
 
 ```bash
-127.0.0.1:6379> zadd myZset 3.0 value1 # 添加元素到 sorted set 中 3.0 为权重
+127.0.0.1: 6379> zadd myZset 3.0 value1 # 添加元素到 sorted set 中 3.0 为权重
 (integer) 1
-127.0.0.1:6379> zadd myZset 2.0 value2 1.0 value3 # 一次添加多个元素
+127.0.0.1: 6379> zadd myZset 2.0 value2 1.0 value3 # 一次添加多个元素
 (integer) 2
-127.0.0.1:6379> zcard myZset # 查看 sorted set 中的元素数量
+127.0.0.1: 6379> zcard myZset # 查看 sorted set 中的元素数量
 (integer) 3
-127.0.0.1:6379> zscore myZset value1 # 查看某个 value 的权重
+127.0.0.1: 6379> zscore myZset value1 # 查看某个 value 的权重
 3
-127.0.0.1:6379> zrange  myZset 0 -1 # 顺序输出某个范围区间的元素，0 -1 表示输出所有元素
+127.0.0.1: 6379> zrange  myZset 0 -1 # 顺序输出某个范围区间的元素，0 -1 表示输出所有元素
 1) value3
 2) value2
 3) value1
-127.0.0.1:6379> zrange  myZset 0 1 # 顺序输出某个范围区间的元素，0 为 start  1 为 stop
+127.0.0.1: 6379> zrange  myZset 0 1 # 顺序输出某个范围区间的元素，0 为 start  1 为 stop
 1) value3
 2) value2
-127.0.0.1:6379> zrevrange  myZset 0 1 # 逆序输出某个范围区间的元素，0 为 start  1 为 stop
+127.0.0.1: 6379> zrevrange  myZset 0 1 # 逆序输出某个范围区间的元素，0 为 start  1 为 stop
 1) value1
 2) value2
 ```
 
 ## 1.8. Redis 单线程模型详解
 
-Redis 基于 Reactor 模式来设计开发了自己的一套高效的事件处理模型 ,这套事件处理模型对应的是 Redis 中的文件事件处理器 (file event handler).由于文件事件处理器是单线程方式运行的，所以一般都说 Redis 是单线程模型。
-
-文件事件处理器 (file event handler) 主要是包含 4 个部分：
-
-- 多个 socket(客户端连接)
-- IO 多路复用程序 (支持多个客户端连接的关键)
-- 文件事件分派器 (将 socket 关联到相应的事件处理器)
-- 事件处理器 (连接应答处理器，命令请求处理器，命令回复处理器)
-
 ![picture 10](../.vuepress/public/assets/images/1640437195543.png)  
 
-### 1.8.1. 单线程怎么监听大量的客户端连接呢？
+Redis 基于 Reactor 模式来设计开发了自己的一套高效的事件处理模型 , 这套事件处理模型对应的是 Redis 中的文件事件处理器 (file event handler).由于文件事件处理器是单线程方式运行的，所以一般都说 Redis 是单线程模型。
 
-Redis 通过 IO 多路复用程序 来监听来自客户端的大量连接 或者说是监听多个 socket，它会将感兴趣的事件及类型 (读，写) 注册到内核中并监听每个事件是否发生。I/O 多路复用技术的使用让 Redis 不需要额外创建多余的线程来监听客户端的大量连接，降低了资源的消耗
+### 1.8.1. 文件事件处理器 (file event handler) 主要是包含 4 个部分
+
+1. 多个 socket(客户端连接)
+1. IO 多路复用程序 (支持多个客户端连接的关键)
+1. 文件事件分派器 (将 socket 关联到相应的事件处理器)
+1. 事件处理器 (连接应答处理器，命令请求处理器，命令回复处理器)
+
+### 1.8.2. 单线程怎么监听大量的客户端连接呢？
+
+Redis 通过 IO 多路复用程序来监听来自客户端的大量连接或者说是监听多个 socket，它会将关注的事件及类型 (读，写) 注册到内核中并监听每个事件是否发生。I/O 多路复用技术的使用让 Redis 不需要额外创建多余的线程来监听客户端的大量连接，降低了资源的消耗
 
 ## 1.9. Redis 没有使用多线程？为什么不使用多线程？
 
 1. 单线程编程容易并且更容易维护;
-2. Redis 的性能瓶颈不在 CPU ,主要在内存和网络;
+2. Redis 的性能瓶颈不在 CPU , 主要在内存和网络;
 3. 多线程就会存在死锁，线程上下文切换等问题，甚至会影响性能。
 
 ## 1.10. Redis6.0 之后为何引入了多线程？
@@ -319,26 +310,27 @@ Redis6.0 的多线程默认是禁用的
 Redis 自带了给缓存数据设置过期时间的功能，比如：
 
 ```bash
-127.0.0.1:6379> exp key 60 # 数据在 60s 后过期
+127.0.0.1: 6379> exp key 60 # 数据在 60s 后过期
 (integer) 1
-127.0.0.1:6379> setex key 60 value # 数据在 60s 后过期 (setex:[set] + [ex]pire)
+127.0.0.1: 6379> setex key 60 value # 数据在 60s 后过期 (setex: [set] + [ex]pire)
 OK
-127.0.0.1:6379> ttl key # 查看数据还有多久过期
+127.0.0.1: 6379> ttl key # 查看数据还有多久过期
 (integer) 56
 ```
 
-注意:Redis 中除了字符串类型有自己独有设置过期时间的命令 setex 外，其他方法都需要依靠 expire 命令来设置过期时间 .另外，persist 命令可以移除一个键的过期时间。
+注意: Redis 中除了字符串类型有自己独有设置过期时间的命令 setex 外，其他方法都需要依靠 expire 命令来设置过期时间 .另外，persist 命令可以移除一个键的过期时间。
 
 ### 1.11.1. 过期时间除了有助于缓解内存的消耗，还有什么其他用么？
 
-很多时候，的业务场景就是需要某个数据只在某一时间段内存在，比如的短信验证码可能只在 1 分钟内有效，用户登录的 token 可能只在 1 天内有效。
+很多时候业务场景需要某个数据只在某一时间段内存在，比如的短信验证码可能只在 1 分钟内有效，用户登录的 token 可能只在 1 天内有效。
 
 如果使用传统的数据库来处理的话，一般都是自己判断过期，这样更麻烦并且性能要差很多。
 
 ## 1.12. Redis 是如何判断数据是否过期的呢？
 
-Redis 通过一个叫做过期字典 (可以看作是 hash 表) 来保存数据过期的时间。过期字典的键指向 Redis 数据库中的某个 key(键),过期字典的值是一个 long long 类型的整数，这个整数保存了 key 所指向的数据库键的过期时间 (毫秒精度的 UNIX 时间戳).
 ![picture 11](../.vuepress/public/assets/images/1640437458273.png)  
+
+Redis 通过一个叫做过期字典 (可以看作是 hash 表) 来保存数据过期的时间。过期字典的键指向 Redis 数据库中的某个 key(键), 过期字典的值是一个 long long 类型的整数，这个整数保存了 key 所指向的数据库键的过期时间 (毫秒精度的 UNIX 时间戳).
 
 过期字典是存储在 redisDb 这个结构里的：
 
@@ -369,41 +361,42 @@ typedef struct redisDb {
 
 > 但是，仅仅通过给 key 设置过期时间还是有问题的。因为还是可能存在定期删除和惰性删除漏掉了很多过期 key 的情况。这样就导致大量过期 key 堆积在内存里，然后就内存不足了。
 >
-> 怎么解决这个问题呢？答案就是:Redis 内存淘汰机制。
+> 怎么解决这个问题呢？答案就是: Redis 内存淘汰机制。
 
 ## 1.14. Redis 内存淘汰机制了解么？
 
-> 相关问题:MySQL 里有 2000w 数据，Redis 中只存 20w 的数据，如何保证 Redis 中的数据都是热点数据？
+> 相关问题: MySQL 里有 2000w 数据，Redis 中只存 20w 的数据，如何保证 Redis 中的数据都是热点数据？
 
 Redis 提供 6 种数据淘汰策略：
 
-1. volatile-lru(least recently used):从已设置过期时间的数据集 (server.db[i].expires) 中挑选最近最少使用的数据淘汰
-2. volatile-ttl:从已设置过期时间的数据集 (server.db[i].expires) 中挑选将要过期的数据淘汰
-3. volatile-random:从已设置过期时间的数据集 (server.db[i].expires) 中任意选择数据淘汰
-4. allkeys-lru(least recently used):当内存不足以容纳新写入数据时，在键空间中，移除最近最少使用的 key(这个是最常用的)
-5. allkeys-random:从数据集 (server.db[i].dict) 中任意选择数据淘汰
-6. no-eviction:禁止驱逐数据，也就是说当内存不足以容纳新写入数据时，新写入操作会报错。这个应该没人使用吧！
+1. allkeys-lru(least recently used): 当内存不足以容纳新写入数据时，在键空间中，移除最近最少使用的 key(这个是最常用的)
+1. volatile-lru(least recently used): 从已设置过期时间的数据集 (server.db[i].expires) 中挑选最近最少使用的数据淘汰
+1. volatile-ttl: 从已设置过期时间的数据集 (server.db[i].expires) 中挑选将要过期的数据淘汰
+1. volatile-random: 从已设置过期时间的数据集 (server.db[i].expires) 中任意选择数据淘汰
+1. allkeys-random: 从数据集 (server.db[i].dict) 中任意选择数据淘汰
+1. no-eviction: 禁止驱逐数据，也就是说当内存不足以容纳新写入数据时，新写入操作会报错。这个应该没人使用吧！
 
-    > 4.0 版本后增加以下两种：
+    1 4.0 版本后增加以下两种：
 
-7. volatile-lfu(least frequently used):从已设置过期时间的数据集 (server.db[i].expires) 中挑选最不经常使用的数据淘汰
-8. allkeys-lfu(least frequently used):当内存不足以容纳新写入数据时，在键空间中，移除最不经常使用的 key
+1. volatile-lfu(least frequently used): 从已设置过期时间的数据集 (server.db[i].expires) 中挑选最不经常使用的数据淘汰
+1. allkeys-lfu(least frequently used): 当内存不足以容纳新写入数据时，在键空间中，移除最不经常使用的 key
 
 ## 1.15. Redis 持久化机制
 
 > 怎么保证 Redis 挂掉之后再重启数据可以进行恢复
 
-很多时候需要持久化数据也就是将内存中的数据写入到硬盘里面，大部分原因是为了之后重用数据 (比如重启机器，机器故障之后恢复数据),或者是为了防止系统故障而将数据备份到一个远程位置。
+持久化数据也就是将内存中的数据写入到硬盘里面，大部分原因是为了之后重用数据 (比如重启机器，机器故障之后恢复数据), 或者是为了防止系统故障而将数据备份到一个远程位置。
 
-Redis 支持持久化，而且支持两种不同的持久化操作.Redis 的一种持久化方式叫快照 (snapshotting,RDB),另一种方式是只追加文件 (append-only file, AOF).
+Redis 支持持久化，而且支持两种不同的持久化操作. Redis 的一种持久化方式叫快照 (snapshotting, RDB), 另一种方式是只追加文件 (append-only file,  AOF).
 
 ### 1.15.1. 快照 (snapshotting) 持久化 (RDB)
 
-Redis 可以通过创建快照来获得存储在内存里面的数据在某个时间点上的副本.Redis 创建快照之后，可以对快照进行备份，可以将快照复制到其他服务器从而创建具有相同数据的服务器副本 (Redis 主从结构，主要用来提高 Redis 性能),还可以将快照留在原地以便重启服务器的时候使用。
+Redis 可以通过创建快照来获得存储在内存里面的数据在某个时间点上的副本.Redis 创建快照之后，可以对快照进行备份，可以将快照复制到其他服务器从而创建具有相同数据的服务器副本 (Redis 主从结构，主要用来提高 Redis 性能), 还可以将快照留在原地以便重启服务器的时候使用。
 
 快照持久化是 Redis 默认采用的持久化方式，在 Redis.conf 配置文件中默认有此下配置：
 
 ```conf
+
 save 900 1           #在 900 秒 (15 分钟) 之后，如果至少有 1 个 key 发生变化，Redis 就会自动触发 BGSAVE 命令创建快照。
 
 save 300 10          #在 300 秒 (5 分钟) 之后，如果至少有 10 个 key 发生变化，Redis 就会自动触发 BGSAVE 命令创建快照。
@@ -411,7 +404,7 @@ save 300 10          #在 300 秒 (5 分钟) 之后，如果至少有 10 个 key
 save 60 10000        #在 60 秒 (1 分钟) 之后，如果至少有 10000 个 key 发生变化，Redis 就会自动触发 BGSAVE 命令创建快照。
 ```
 
-### 1.15.2. AOF(append-only file) 持久化
+### 1.15.2. AOF(append-only file) 持久化 (主流方案)
 
 与快照持久化相比，AOF 持久化的实时性更好，因此已成为主流的持久化方案。默认情况下 Redis 没有开启 AOF(append only file) 方式的持久化，可以通过 appendonly 参数开启：
 
@@ -431,11 +424,11 @@ appendfsync everysec  #每秒钟同步一次，显示地将多个写命令同步
 appendfsync no        #让操作系统决定何时进行同步
 ```
 
-为了兼顾数据和写入性能，用户可以考虑 appendfsync everysec 选项 ,让 Redis 每秒同步一次 AOF 文件，Redis 性能几乎没受到任何影响。而且这样即使出现系统崩溃，用户最多只会丢失一秒之内产生的数据。当硬盘忙于执行写入操作的时候，Redis 还会优雅的放慢自己的速度以便适应硬盘的最大写入速度。
+为了兼顾数据和写入性能，用户可以考虑 appendfsync everysec 选项 , 让 Redis 每秒同步一次 AOF 文件，Redis 性能几乎没受到任何影响。而且这样即使出现系统崩溃，用户最多只会丢失一秒之内产生的数据。当硬盘忙于执行写入操作的时候，Redis 还会优雅的放慢自己的速度以便适应硬盘的最大写入速度。
 
 ## 1.16. Redis 事务
 
-Redis 可以通过 MULTI,EXEC,DISCARD 和 WATCH 等命令来实现事务 (transaction) 功能。
+Redis 可以通过 MULTI, EXEC, DISCARD 和 WATCH 等命令来实现事务 (transaction) 功能。
 
 ```bash
 > MULTI
@@ -457,7 +450,7 @@ QUEUED
 2. 命令入队 (批量操作 Redis 的命令，先进先出 (FIFO) 的顺序执行).
 3. 执行事务 (EXEC).
 
-你也可以通过 [DISCARD](https://redis.io/commands/discard) 命令取消一个事务，它会清空事务队列中保存的所有命令。
+你也可以通过 [DISCARD](https: //redis.io/commands/discard) 命令取消一个事务，它会清空事务队列中保存的所有命令。
 
 ```bash
 > MULTI
@@ -470,7 +463,7 @@ QUEUED
 OK
 ```
 
-[WATCH](https://redis.io/commands/watch) 命令用于监听指定的键，当调用 EXEC 命令执行事务时，如果一个被 WATCH 命令监视的键被修改的话，整个事务都不会执行，直接返回失败。
+[WATCH](https: //redis.io/commands/watch) 命令用于监听指定的键，当调用 EXEC 命令执行事务时，如果一个被 WATCH 命令监视的键被修改的话，整个事务都不会执行，直接返回失败。
 
 ```bash
 > WATCH USER
@@ -488,12 +481,12 @@ ERR EXEC without MULTI
 
 Redis 是不支持 roll back 的，因而不满足原子性的 (而且不满足持久性)
 
-事务具有四大特性: 1. 原子性，2. 隔离性，3. 持久性，4. 一致性。
+事务具有四大特性:  1. 原子性，2. 隔离性，3. 持久性，4. 一致性。
 
-1. 原子性 (Atomicity): 事务是最小的执行单位，不允许分割。事务的原子性确保动作要么全部完成，要么完全不起作用;
-2. 隔离性 (Isolation): 并发访问数据库时，一个用户的事务不被其他事务所干扰，各并发事务之间数据库是独立的;
-3. 持久性 (Durability): 一个事务被提交之后。它对数据库中数据的改变是持久的，即使数据库发生故障也不应该对其有任何影响。
-4. 一致性 (Consistency): 执行事务前后，数据保持一致，多个事务对同一个数据读取的结果是相同的;
+1. 原子性 (Atomicity):  事务是最小的执行单位，不允许分割。事务的原子性确保动作要么全部完成，要么完全不起作用;
+2. 隔离性 (Isolation):  并发访问数据库时，一个用户的事务不被其他事务所干扰，各并发事务之间数据库是独立的;
+3. 持久性 (Durability):  一个事务被提交之后。它对数据库中数据的改变是持久的，即使数据库发生故障也不应该对其有任何影响。
+4. 一致性 (Consistency):  执行事务前后，数据保持一致，多个事务对同一个数据读取的结果是相同的;
 
 ## 1.17. 缓存穿透
 
@@ -529,11 +522,11 @@ public Object getObjectInclNullById(Integer id) {
         // 从数据库中获取
         Object storageValue = storage.get(key);
         // 缓存空对象
-        cache.set(key, storageValue);
+        cache.set(key,  storageValue);
         // 如果存储数据为空，需要设置一个过期时间 (300 秒)
         if (storageValue == null) {
             // 必须设置过期时间，否则有被攻击的风险
-            cache.expire(key, 60 * 5);
+            cache.expire(key,  60 * 5);
         }
         return storageValue;
     }
@@ -562,7 +555,7 @@ public Object getObjectInclNullById(Integer id) {
 >
 > 还有一种缓存雪崩的场景是：有一些被大量访问数据 (热点缓存) 在某一时刻大面积失效，导致对应的请求直接落到了数据库上。
 >
-> 举个例子 :秒杀开始 12 个小时之前，统一存放了一批商品到 Redis 中，设置的缓存过期时间也是 12 个小时，那么秒杀开始的时候，这些秒杀的商品的访问直接就失效了。导致的情况就是，相应的请求直接就落到了数据库上，就像雪崩一样可怕。
+> 举个例子 : 秒杀开始 12 个小时之前，统一存放了一批商品到 Redis 中，设置的缓存过期时间也是 12 个小时，那么秒杀开始的时候，这些秒杀的商品的访问直接就失效了。导致的情况就是，相应的请求直接就落到了数据库上，就像雪崩一样可怕。
 
 ### 1.18.2. 有哪些解决办法？
 
