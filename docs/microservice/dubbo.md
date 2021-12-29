@@ -60,7 +60,7 @@ Dubbo 是一个分布式，高性能，透明化的 基于 Java 的 RPC 分布�
 
 ## 1.6. 什么是分布式？
 
-分布式就是把整个系统拆分成不同的服务，然后将这些服务放在不同的服务器上减轻单体服务的压力以提高并发量和性能。
+分布式就是把整个系统拆分成不同的服务，然后将这些服务放在不同的服务器上以便减轻单体服务的压力并提高并发量和性能。
 
 > 比如电商系统可以简单地拆分成订单系统，商品系统，登录系统等等，拆分之后的每个服务可以部署在不同的机器上，如果某一个服务的访问量比较大的话也可以将这个服务同时部署在多台机器上。
 
@@ -152,10 +152,10 @@ Dubbo 采用 微内核 (Microkernel) + 插件 (Plugin) 模式，微内核只负�
 
 ## 1.18. Dubbo 提供的负载均衡策略有哪些？
 
-1. RandomLoadBalance:随机负载均衡。随机的选择一个。是 Dubbo 的默认负载均衡策略。
-1. RoundRobinLoadBalance:轮询负载均衡。轮询选择一个。
-1. LeastActiveLoadBalance:最少活跃调用数，相同活跃数的随机。活跃数指调用前后计数差。使慢的 Provider 收到更少请求，因为越慢的 Provider 的调用前后计数差会越大。
-1. ConsistentHashLoadBalance:一致性哈希负载均衡。相同参数的请求总是落在同一台机器上。
+1. Random LoadBalance:随机负载均衡。随机的选择一个，有利于动态调整提供者权重。截面碰撞率高，调用次数越多，分布越均匀，是 Dubbo 的默认负载均衡策略。
+1. RoundRobin LoadBalance:轮询负载均衡，轮询选择一个。 平均分布，但是存在请求累积的问题
+1. LeastActive LoadBalance:最少活跃调用数，相同活跃数的随机。活跃数指调用前后计数差。使慢的 Provider 收到更少请求，因为越慢的 Provider 的调用前后计数差会越大。
+1. ConsistentHash LoadBalance:一致性哈希负载均衡。相同参数的请求总是落在同一台机器上。
 
 ## 1.19. Dubbo 支持哪些协议，每种协议的应用场景，优缺点？
 
@@ -223,7 +223,8 @@ Dubbo 采用 微内核 (Microkernel) + 插件 (Plugin) 模式，微内核只负�
 
 ## 1.24. 为什么需要服务治理？
 
-![](https://upload-images.jianshu.io/upload_images/3801725-112d27e2f8401575.png?imageMogr2/auto-orient/strip|imageView2/2/w/800/format/webp)
+![picture 3](../.vuepress/public/assets/images/1640738984714.png)  
+
 
 1. 过多的服务 URL 配置困难
 1. 负载均衡分配节点压力过大的情况下也需要部署集群
@@ -234,14 +235,7 @@ Dubbo 采用 微内核 (Microkernel) + 插件 (Plugin) 模式，微内核只负�
 
 默认使用 NIO Netty 框架
 
-## 1.26. Dubbo 集群提供了哪些负载均衡策略？
-
-1. Random LoadBalance: 随机选取提供者策略，有利于动态调整提供者权重。截面碰撞率高，调用次数越多，分布越均匀;
-1. RoundRobin LoadBalance: 轮循选取提供者策略，平均分布，但是存在请求累积的问题;  LeastActive LoadBalance: 最少活跃调用策略，解决慢提供者接收更少的请求;
-1. ConstantHash LoadBalance: 一致性 Hash 策略，使相同参数请求总是发到同一提供者，一台机器宕机，可以基于虚拟节点，分摊至其他提供者，避免引起提供者的剧烈变动;
-1. 缺省时为 Random 随机调用
-
-## 1.27. Dubbo 的集群容错方案有哪些？
+## 1.26. Dubbo 的集群容错方案有哪些？
 
 1. Failover Cluster (默认)
    失败自动切换，当出现失败，重试其它服务器。通常用于读操作，但重试会带来更长延迟。
@@ -256,23 +250,23 @@ Dubbo 采用 微内核 (Microkernel) + 插件 (Plugin) 模式，微内核只负�
 1. Broadcast Cluster
    广播调用所有提供者，逐个调用，任意一台报错则报错 . 通常用于通知所有提供者更新缓存或日志等本地资源信息
 
-## 1.28. Dubbo 支持哪些序列化方式？
+## 1.27. Dubbo 支持哪些序列化方式？
 
 默认使用 Hessian 序列化，还有 Duddo, FastJson, Java 自带序列化。
 
-## 1.29. 服务调用超时问题怎么解决？
+## 1.28. 服务调用超时问题怎么解决？
 
 dubbo 在调用服务不成功时，默认是会重试两次的。
 
-## 1.30. Dubbo 在安全机制方面是如何解决？
+## 1.29. Dubbo 在安全机制方面是如何解决？
 
 Dubbo 通过 Token 令牌防止用户绕过注册中心直连，然后在注册中心上管理授权. Dubbo 还提供服务黑白名单，来控制服务所允许的调用方。
 
-## 1.31. Dubbo 与 Spring 的关系？
+## 1.30. Dubbo 与 Spring 的关系？
 
 Dubbo 采用全 Spring 配置方式，透明化接入应用，对应用没有任何 API 侵入，只需用 Spring 加载 Dubbo 的配置即可，Dubbo 基于 Spring 的 Schema 扩展进行加载。
 
-## 1.32. Dubbo 和 Spring Cloud 的关系？
+## 1.31. Dubbo 和 Spring Cloud 的关系？
 
 1. Dubbo SOA 的产物 (Service Oriented Ambiguity) 即面向服务架构，是基于 TCP 协议传输的，配合以 Hession 序列化完成 RPC 通信。主要在于服务的调用，流量分发，流量监控和熔断。定位服务治理
 1. Spring Cloud 是基于 Http 协议 + Rest 接口调用远程过程的通信，考虑的是微服务治理
