@@ -8,7 +8,7 @@ module.exports = {
     navbar: [
       {
         text: 'home',
-        link: '/interview/',
+        link: '/',
       },
       {
         text: 'java',
@@ -23,8 +23,12 @@ module.exports = {
             link: '/java/collection',
           },
           {
-            text: 'multithreading',
-            link: '/java/multithreading',
+            text: 'multithreadingbasic',
+            link: '/java/multithreadingbasic',
+          },
+          {
+            text: 'multithreadingadvanced',
+            link: '/java/multithreadingadvanced',
           },
           {
             text: 'jvm',
@@ -126,7 +130,7 @@ module.exports = {
       '/java/': [
         {
           text: 'java',
-          children: ['basic', 'collection', 'multithreading', 'jvm'],
+          children: ['basic', 'collection', 'multithreadingbasic', 'multithreadingadvanced', 'jvm'],
         },
       ],
 
@@ -171,4 +175,4 @@ module.exports = {
       ],
     },
   },
-}
+};

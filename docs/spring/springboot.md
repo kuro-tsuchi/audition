@@ -140,14 +140,6 @@ public class AppConfig {
 }
 ```
 
-上面的代码相当于下面的 xml 配置
-
-```xml
-<beans>
-    <bean id="transferService" class="com.acme.TransferServiceImpl"/>
-</beans>
-```
-
 下面这个例子是通过 @Component 无法实现的.
 
 ```java
@@ -177,12 +169,12 @@ public OneService getService(status) {
 
 #### 1.4.6.1. 相同点
 
-spring 中都可以用来注入 bean, 同时都还可以作为注入属性的修饰.
+@Resource 和 @Autowired 注解都是用于 Bean 的注入
 
 #### 1.4.6.2. 不同点
 
-1. @Resource 是 Java 自己的注解, @Resource 有两个主要的属性, 分别是 name 和 type; spring 对 @Resource 注解的 name 属性解析为 bean 的名字, 而 type 属性则解析为 bean 的类型. 所以如果使用 name 属性, 则使用 byName 的自动注入策略. 而使用 type 属性, 则是使用 byType 的自动注入策略. 如果既不指定 name 属性也不指定 type 属性, 这时将通过反射机制使用 byName 的自动注入策略.
-1. @Autowired 是 spring 的注解, @Autowired 注解只根据 type 进行注入, 不会去匹配 name. 如果涉及到根据 type 无法辨别的注入对象, 将需要依赖 @Qualifier 或 @Primary 注解一起来修饰.
+1. @Resource 是 Java 自己的注解, @Resource 有两个主要的属性, 分别是 name 和 type, spring 对 @Resource 注解的 name 属性解析为 bean 的名字, 而 type 属性则解析为 bean 的类型. 所以如果使用 name 属性, 则使用 byName 的自动注入策略. 而使用 type 属性, 则是使用 byType 的自动注入策略. 默认使用 byName 的自动注入策略.
+1. @Autowired 是 spring 的注解, @Autowired 注解只根据 type 进行注入. 如果涉及到根据 type 无法辨别的注入对象, 将需要依赖 @Qualifier 或 @Primary 注解一起来修饰.
 
 ### 1.4.7. bean 的生命周期?
 
@@ -208,7 +200,9 @@ spring 中都可以用来注入 bean, 同时都还可以作为注入属性的修
 
 ![](https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/java-guide-blog/image-20210809181452421.png)
 
-MVC 是一种设计模式.MVC 是模型(Model), 视图(View), 控制器(Controller)的简写, 其核心思想是通过将业务逻辑, 数据, 显示分离来组织代码.Spring MVC 可以帮助进行更简洁的 Web 层的开发, 并且它天生与 Spring 框架集成.
+MVC 是一种设计模式. MVC 是模型(Model), 视图(View), 控制器(Controller)的简写, 其核心思想是通过将业务逻辑, 数据, 显示分离来组织代码.
+
+Spring MVC 可以帮助进行更简洁的 Web 层的开发, 并且它天生与 Spring 框架集成.
 
 ### 1.5.2. SpringMVC 工作原理了解吗?
 
@@ -232,7 +226,7 @@ Spring MVC 原理如下图所示:
 - 工厂设计模式 : Spring 使用工厂模式通过 BeanFactory, ApplicationContext 创建 bean 对象.
 - 代理设计模式 : Spring AOP 功能的实现.
 - 单例设计模式 : Spring 中的 Bean 默认都是单例的.
-- 模板方法模式 : Spring 中 jdbcTemplate, hibernateTemplate 等以 Template 结尾的对数据库操作的类, 它们就使用到了模板模式.
+- 模板方法模式 : Spring 中 jdbcTemplate, redisTemplate 等以 Template 结尾的对数据库操作的类, 它们就使用到了模板模式.
 - 包装器设计模式 : 项目需要连接多个数据库, 而且不同的客户在每次访问中根据需要会去访问不同的数据库.这种模式让可以根据客户的需求能够动态切换不同的数据源.
 - 观察者模式: Spring 事件驱动模型就是观察者模式很经典的一个应用.
 - 适配器模式 : Spring AOP 的增强或通知(Advice)使用到了适配器模式, spring MVC 中也是用到了适配器模式适配 Controller.
@@ -241,8 +235,8 @@ Spring MVC 原理如下图所示:
 
 ### 1.7.1. Spring 管理事务的方式有几种?
 
-1. 编程式事务 : 在代码中硬编码(不推荐使用) : 通过 TransactionTemplate 或者 TransactionManager 手动管理事务, 实际应用中很少使用, 但是对于你理解 Spring 事务管理原理有帮助.
-1. 声明式事务 : 在 XML 配置文件中配置或者直接基于注解(@Transactional) : 实际是通过 AOP 实现
+1. 声明式事务 : 直接基于注解(@Transactional)或在 XML 配置文件中配置, 实际是通过 AOP 实现
+1. 编程式事务 : 在代码中硬编码(不推荐使用) : 通过 TransactionTemplate 或者 TransactionManager 手动管理事务, 实际应用中很少使用
 
 ### 1.7.2. Spring 事务中哪几种事务传播行为?
 
