@@ -65,20 +65,7 @@ module.exports = {
           },
         ],
       },
-      {
-        text: 'microservice',
-        link: '/microservice/',
-        children: [
-          {
-            text: 'zookeeper',
-            link: '/microservice/zookeeper',
-          },
-          {
-            text: 'dubbo',
-            link: '/microservice/dubbo',
-          },
-        ],
-      },
+
       {
         text: 'mq',
         link: '/mq/',
@@ -111,6 +98,20 @@ module.exports = {
           },
         ],
       },
+      {
+        text: 'distributed',
+        link: '/distributed/',
+        children: [
+          {
+            text: 'zookeeper',
+            link: '/distributed/zookeeper',
+          },
+          {
+            text: 'dubbo',
+            link: '/distributed/dubbo',
+          },
+        ],
+      },
 
       {
         text: 'additional',
@@ -131,7 +132,13 @@ module.exports = {
       '/java/': [
         {
           text: 'java',
-          children: ['basic', 'collection', 'multithreadingbasic', 'multithreadingadvanced', 'jvm'],
+          children: [
+            'basic',
+            'collection',
+            'multithreadingbasic',
+            'multithreadingadvanced',
+            'jvm',
+          ],
         },
       ],
 
@@ -142,9 +149,9 @@ module.exports = {
         },
       ],
 
-      '/microservice/': [
+      '/distributed/': [
         {
-          text: 'microservice',
+          text: 'distributed',
           children: ['zookeeper', 'dubbo'],
         },
       ],
@@ -176,4 +183,4 @@ module.exports = {
       ],
     },
   },
-};
+}

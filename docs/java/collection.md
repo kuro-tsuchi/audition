@@ -107,7 +107,7 @@ HashMap 基于哈希表，它实现了 Map 接口，以键值对形式存储数�
 
 > Hash 碰撞是计算得到的 Hash 值相同
 
-## 1.8. HashMap 的长度为什么是 2 的幂次方 
+## 1.8. HashMap 的长度为什么是 2 的幂次方
 
 为了加快哈希计算以及减少哈希冲突
 
@@ -168,6 +168,6 @@ ConcurrentHashMap 和 Hashtable 的区别主要体现在实现线程安全的方
 
 ## 1.13. 如何选用集合？
 
-需要根据键值获取到元素值时就选用 Map 接口下的集合，需要排序时选择 TreeMap，不需要排序时就选择 HashMap，需要保证线程安全就选用 ConcurrentHashMap.
+1. 需要根据键值获取到元素值时: 选用 Map 接口下的集合，需要排序时选择 TreeMap，不需要排序时就选择 HashMap，需要保证线程安全就选用 ConcurrentHashMap.
 
-当只需要存放元素值时，就选择实现 Collection 接口的集合，需要保证元素唯一时选择实现 Set 接口的集合比如 TreeSet 或 HashSet，不需要就选择实现 List 接口的比如 ArrayList 或 LinkedList
+1. 当只需要存放元素值时: 选择实现 Collection 接口的集合，需要保证元素唯一时选择实现 Set 接口的集合比如 TreeSet 或 HashSet，不需要保证元素唯一就选择实现 List 接口的比如 ArrayList 或 LinkedList
