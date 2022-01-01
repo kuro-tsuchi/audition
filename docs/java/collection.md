@@ -168,6 +168,12 @@ ConcurrentHashMap 和 Hashtable 的区别主要体现在实现线程安全的方
 
 ## 1.13. 如何选用集合？
 
-1. 需要根据键值获取到元素值时: 选用 Map 接口下的集合，需要排序时选择 TreeMap，不需要排序时就选择 HashMap，需要保证线程安全就选用 ConcurrentHashMap.
+1. 需要根据键值获取到元素值时, 选用 Map 接口下的集合
 
-1. 当只需要存放元素值时: 选择实现 Collection 接口的集合，需要保证元素唯一时选择实现 Set 接口的集合比如 TreeSet 或 HashSet，不需要保证元素唯一就选择实现 List 接口的比如 ArrayList 或 LinkedList
+   - 需要排序时选择 TreeMap
+   - 不需要排序时就选择 HashMap
+   - 需要保证线程安全就选用 ConcurrentHashMap
+
+1. 只需要存放元素值时, 选择实现 Collection 接口的集合
+   - 需要保证元素唯一时选择实现 Set 接口的集合比如 TreeSet 或 HashSet
+   - 不需要保证元素唯一就选择实现 List 接口的比如 ArrayList 或 LinkedList
