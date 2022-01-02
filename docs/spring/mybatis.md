@@ -2,7 +2,7 @@
 
 ## 1.1. #{}和\${}的区别是什么?
 
-1. ${}是 Properties 文件中的变量占位符, 它可以用于标签属性值和 sql 内部, 属于静态文本替换, 比如\${driver}会被静态替换为 com.mysql.jdbc. Driver.
+1. ${}是 Properties 文件中的变量占位符, 它可以用于标签属性值和 sql 内部, 属于静态文本替换, 比如\${driver}会被静态替换为 com.mysql.jdbc.Driver.
 1. #{}是 sql 的参数占位符, MyBatis 会将 sql 中的#{}替换为?号, 在 sql 执行前会使用 PreparedStatement 的参数设置方法, 按序给 sql 的?号占位符设置参数值
 
 ## 1.2. Xml 映射文件中, 除了常见的 select|insert|update|delete 标签之外, 还有哪些标签?
@@ -39,9 +39,7 @@ MyBatis 动态 sql 可以让我们在 Xml 映射文件内, 以标签的形式编
 
 ## 1.7. MyBatis 是如何将 sql 执行结果封装为目标对象并返回的? 都有哪些映射形式?
 
-第一种是使用 <resultMap\> 标签, 逐一定义列名和对象属性名之间的映射关系.第二种是使用 sql 列的别名功能, 将列别名书写为对象属性名, 比如 T_NAME AS NAME, 对象属性名一般是 name, 小写, 但是列名不区分大小写, MyBatis 会忽略列名大小写, 智能找到与之对应对象属性名, 你甚至可以写成 T_NAME AS NaMe, MyBatis 一样可以正常工作.
-
-有了列名与属性名的映射关系后, MyBatis 通过反射创建对象, 同时使用反射给对象的属性逐一赋值并返回, 那些找不到映射关系的属性, 是无法完成赋值的.
+使用 <resultMap\> 标签, 逐一定义列名和对象属性名之间的映射关系.有了列名与属性名的映射关系后, MyBatis 通过反射创建对象, 同时使用反射给对象的属性逐一赋值并返回, 那些找不到映射关系的属性, 是无法完成赋值的.
 
 ## 1.8. MyBatis 是否支持延迟加载? 如果支持, 它的实现原理是什么?
 
@@ -63,7 +61,7 @@ MyBatis 仅支持 association 关联对象和 collection 关联集合对象的�
 
 ## 1.11. MyBatis 都有哪些 Executor 执行器? 它们之间的区别是什么?
 
-MyBatis 有三种基本的 Executor 执行器, SimpleExecutor , ReuseExecutor , BatchExecutor .
+MyBatis 有三种基本的 Executor 执行器, SimpleExecutor , ReuseExecutor , BatchExecutor. 默认是 SimplExcutor. 
 
 1. SimpleExecutor: 每执行一次 update 或 select, 就开启一个 Statement 对象, 用完立刻关闭 Statement 对象.
 1. ReuseExecutor: 执行 update 或 select, 以 sql 作为 key 查找 Statement 对象, 存在就使用, 不存在就创建, 用完后, 不关闭 Statement 对象, 而是放置于 Map<String, Statement\>内, 供下一次使用.简言之, 就是重复使用 Statement 对象.
