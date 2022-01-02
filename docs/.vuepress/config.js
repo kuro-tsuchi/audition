@@ -56,10 +56,6 @@ module.exports = {
         link: '/springcloud/',
         children: [
           {
-            text: 'nacos',
-            link: '/springcloud/nacos',
-          },
-          {
             text: 'summary',
             link: '/springcloud/summary',
           },
@@ -159,7 +155,7 @@ module.exports = {
       '/springcloud/': [
         {
           text: 'springcloud',
-          children: ['summary', 'nacos'],
+          children: ['summary'],
         },
       ],
 
