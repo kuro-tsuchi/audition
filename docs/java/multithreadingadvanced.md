@@ -1,3 +1,7 @@
+<!-- ---
+sidebar: false
+--- -->
+
 # 1. 多线程-进阶
 
 ## 1.1. 说一说自己对于 synchronized 关键字的了解
@@ -164,7 +168,7 @@ CPU 缓存则是为了解决 CPU 处理速度和内存处理速度不对等的�
 
 `public volatile int counter = 0;`
 
-### 1.7.1. volatile的特性:
+### 1.7.1. volatile的特性
 
 1. 保证了不同线程对该变量操作的内存可见性;
 1. 禁止指令重排序

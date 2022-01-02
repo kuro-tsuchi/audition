@@ -1,6 +1,7 @@
----
+<!-- ---
 sidebar: false
----
+--- -->
+
 # 1. RocketMQ
 
 ## 1.1. RocketMQ 是什么？
