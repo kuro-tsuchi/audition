@@ -53,7 +53,7 @@ Spring 的测试模块对 JUnit(单元测试框架), TestNG(类似 JUnit), Mocki
 
 ### 1.5.1. 谈谈自己对于 Spring IoC 的了解
 
-![](https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/java-guide-blog/frc-365faceb5697f04f31399937c059c162.png)
+![picture 14](../.vuepress/public/assets/images/1641169014426.png)  
 
 IoC(Inverse of Control:控制反转) 是一种设计思想, 而不是一个具体的技术实现.
 IoC 的思想就是将原本在程序中手动创建对象的控制权, 交由 Spring 框架来管理.
@@ -81,7 +81,7 @@ AOP(Aspect-Oriented Programming:面向切面编程)能够将那些与业务无�
 
 Spring AOP 就是基于动态代理的, 如果要代理的对象, 实现了某个接口, 那么 Spring AOP 会使用 JDK Proxy 去创建代理对象, 而对于没有实现接口的对象, 就无法使用 JDK Proxy 去进行代理了, 这时候 Spring AOP 会使用 Cglib 生成一个被代理对象的子类来作为代理, 如下图所示:
 
-![SpringAOPProcess](https://images.xiaozhuanlan.com/photo/2019/926dfc549b06d280a37397f9fd49bf9d.jpg)
+![picture 15](../.vuepress/public/assets/images/1641169026894.png)  
 
 ### 1.5.3. Spring AOP 和 AspectJ AOP 有什么区别?
 
@@ -95,7 +95,7 @@ Spring AOP 已经集成了 AspectJ , AspectJ 应该算的上是 Java 生态系�
 
 ### 1.6.1. 什么是 bean?
 
-![](http://itmyhome.com/spring/images/container-magic.png)
+![picture 16](../.vuepress/public/assets/images/1641169049617.png)  
 
 bean 指的就是那些被 IoC 容器所管理的对象.
 
@@ -184,7 +184,7 @@ public OneService getService(status) {
 
 ### 1.6.7. bean 的生命周期?
 
-![Spring Bean 生命周期](https://images.xiaozhuanlan.com/photo/2019/b5d264565657a5395c2781081a7483e1.jpg)
+![picture 17](../.vuepress/public/assets/images/1641169063838.png)  
 
 1. Bean 容器找到配置文件中 Spring Bean 的定义.
 1. Bean 容器利用 Java Reflection API 创建一个 Bean 的实例.
@@ -204,7 +204,7 @@ public OneService getService(status) {
 
 ### 1.7.1. 说说自己对于 Spring MVC 了解?
 
-![](https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/java-guide-blog/image-20210809181452421.png)
+![picture 18](../.vuepress/public/assets/images/1641169111029.png)  
 
 MVC 是一种设计模式. MVC 是模型(Model), 视图(View), 控制器(Controller)的简写, 其核心思想是通过将业务逻辑, 数据, 显示分离来组织代码.
 
@@ -214,7 +214,8 @@ Spring MVC 可以帮助进行更简洁的 Web 层的开发, 并且它天生与 S
 
 Spring MVC 原理如下图所示:
 
-![](https://img-blog.csdnimg.cn/img_convert/de6d2b213f112297298f3e223bf08f28.png)
+![picture 19](../.vuepress/public/assets/images/1641169199108.png)  
+
 
 流程说明(重要):
 

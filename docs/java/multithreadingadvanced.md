@@ -147,7 +147,7 @@ uniqueInstance 采用 volatile 关键字修饰也是很有必要的,uniqueInstan
 
 ## 1.5. 为什么要弄一个 CPU 高速缓存呢?
 
-![](https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/2020-8/303a300f-70dd-4ee1-9974-3f33affc6574.png)
+![picture 6](../.vuepress/public/assets/images/1641168803025.png)  
 
 CPU 缓存则是为了解决 CPU 处理速度和内存处理速度不对等的问题.
 
@@ -155,7 +155,7 @@ CPU 缓存则是为了解决 CPU 处理速度和内存处理速度不对等的�
 
 ## 1.6. 讲一下 JMM(Java 内存模型)
 
-![JMM(Java内存模型)](https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/2020-8/0ac7e663-7db8-4b95-8d8e-7d2b179f67e8.png)
+![picture 7](../.vuepress/public/assets/images/1641168839088.png)  
 
 在当前的 Java 内存模型下, 线程可以把变量保存本地内存(比如寄存器)中, 而不是直接在主存中进行读写. 这就可能造成一个线程在主存中修改了一个变量的值, 而另外一个线程还继续使用它在寄存器中的变量值的拷贝, 造成数据的不一致.
 要解决这个问题, 就需要把变量声明为 volatile, 这就指示 JVM, 这个变量是共享且不稳定的, 每次使用它都到主存中进行读取.
@@ -294,12 +294,11 @@ public void execute(Runnable command) {
 ## 1.15. 如何创建线程池
 
 <<阿里巴巴 Java 开发手册>> 中强制线程池不允许使用 Executors 去创建, 而是通过 ThreadPoolExecutor 的方式, 这样的处理方式让写的同学更加明确线程池的运行规则, 规避资源耗尽的风险
-
-![](https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-6/ThreadPoolExecutor%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95.png)
+![picture 8](../.vuepress/public/assets/images/1641168855075.png)  
 
 ### 1.15.1. 通过 Executor 框架的工具类 Executors 来实现
 
-![](https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-6/Executor%E6%A1%86%E6%9E%B6%E7%9A%84%E5%B7%A5%E5%85%B7%E7%B1%BB.png)
+![picture 9](../.vuepress/public/assets/images/1641168869626.png)  
 
 1. FixedThreadPool: 该方法返回一个固定线程数量的线程池. 该线程池中的线程数量始终不变. 当有一个新的任务提交时, 线程池中若有空闲线程, 则立即执行. 若没有, 则新的任务会被暂存在一个任务队列中, 待有线程空闲时, 便处理在任务队列中的任务.
 1. SingleThreadExecutor: 方法返回一个只有一个线程的线程池. 若多余一个任务被提交到该线程池, 任务会被保存在一个任务队列中, 待线程空闲, 按先入先出的顺序执行队列中的任务.
@@ -366,7 +365,8 @@ public ThreadPoolExecutor(int corePoolSize,
 
 ### 1.15.5. 线程池原理分析
 
-![](https://static001.geekbang.org/infoq/07/07fb9ec57f20d5d505261bc6af88236b.png)
+![picture 10](../.vuepress/public/assets/images/1641168885950.png)  
+
 
 > 比如: 我们在代码中模拟了 10 个任务, 我们配置的核心线程数为 5 , 等待队列容量为 100 , 所以每次只可能存在 5 个任务同时执行, 剩下的 5 个任务会被放到等待队列中去. 当前的 5 个任务中如果有任务被执行完了, 线程池就会去拿新的任务执行
 

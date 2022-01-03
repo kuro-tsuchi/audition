@@ -13,8 +13,7 @@ Nacos 是阿里的一个开源产品, 它是针对微服务架构中的服务发
 ### 1.2.1. Nacos 注册中心原理
 
 服务提供者, 服务消费者, 服务发现组件这三者之间的关系大致如下
-
-![](http://file.adsl2812358.top/oneblog/article/20210329105336336.png)
+![picture 20](../.vuepress/public/assets/images/1641169227289.png)  
 
 1. 微服务在启动时, 将自己的网络地址等信息注册到服务发现组件 (nacos server) 中, 服务发现组件会存储这些信息.
 1. 各个微服务与服务发现组件使用一定机制通信 (例如在一定的时间内发送心跳包).服务发现组件若发现与某微服务实例通信正常则保持注册状态 (up 在线状态),若长时间无法与某微服务实例通信, 就会自动注销 (即: 删除) 该实例.
@@ -143,9 +142,9 @@ public class TestController {
 
 ## 1.4. 服务网关 gateway
 
-![](https://img-blog.csdnimg.cn/20210218232015920.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWhlbmdodWk1MjAx,size_16,color_FFFFFF,t_70)
+![picture 21](../.vuepress/public/assets/images/1641169264827.png)  
+![picture 22](../.vuepress/public/assets/images/1641169276865.png)  
 
-![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8d8486dfc9c44884aaf4f1aa5d1d9917~tplv-k3u1fbpfcp-watermark.awebp)
 
 ### 1.4.1. 什么是微服务网关?
 

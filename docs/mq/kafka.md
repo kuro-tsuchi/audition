@@ -31,8 +31,8 @@ RocketMQ 的消息模型和 Kafka 基本是完全一样的。唯一的区别是 
 ## 1.4. 什么是 Producer,Consumer,Broker,Topic,Partition?
 
 Kafka 将生产者发布的消息发送到 Topic(主题) 中，需要这些消息的消费者可以订阅这些 Topic(主题),如下图所示：
+![picture 12](../.vuepress/public/assets/images/1641168936294.png)  
 
-![Kafka Topic Partition](https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-11/KafkaTopicPartitioning.png)
 
 1. Producer(生产者) : 产生消息的一方。
 2. Consumer(消费者) : 消费消息的一方。
