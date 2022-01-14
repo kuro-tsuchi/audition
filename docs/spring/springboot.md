@@ -206,18 +206,13 @@ public OneService getService(status) {
 
 ![picture 18](../.vuepress/public/assets/images/1641169111029.png)  
 
-MVC 是一种设计模式. MVC 是模型(Model), 视图(View), 控制器(Controller)的简写, 其核心思想是通过将业务逻辑, 数据, 显示分离来组织代码.
-
-Spring MVC 可以帮助进行更简洁的 Web 层的开发, 并且它天生与 Spring 框架集成.
+MVC 是一种设计模式. MVC 是模型(Model), 视图(View), 控制器(Controller)的简写, Spring MVC 可以帮助进行更简洁的 Web 层的开发, 并且它天生与 Spring 框架集成.
 
 ### 1.7.2. SpringMVC 工作原理了解吗?
 
 Spring MVC 原理如下图所示:
 
 ![picture 19](../.vuepress/public/assets/images/1641169199108.png)  
-
-
-流程说明(重要):
 
 1. 客户端(浏览器)发送请求, 直接请求到 DispatcherServlet.
 2. DispatcherServlet 根据请求信息调用 HandlerMapping, 解析请求对应的 Handler.

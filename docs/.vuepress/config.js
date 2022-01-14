@@ -61,7 +61,6 @@ module.exports = {
           },
         ],
       },
-
       {
         text: 'mq',
         link: '/mq/',
@@ -108,11 +107,14 @@ module.exports = {
           },
         ],
       },
-
       {
         text: 'additional',
         link: '/additional/',
         children: [
+          {
+            text: 'docker',
+            link: '/additional/docker',
+          },
           {
             text: 'linux',
             link: '/additional/linux',
@@ -174,7 +176,7 @@ module.exports = {
       '/additional/': [
         {
           text: 'additional',
-          children: ['linux'],
+          children: ['docker', 'linux'],
         },
       ],
     },

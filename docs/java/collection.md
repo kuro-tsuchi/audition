@@ -43,7 +43,7 @@ HashMap 是非线程安全的，HashTable 是线程安全的，因为 HashTable 
 
 ### 1.4.3. 对 Null key 和 Null value 的支持
 
-HashMap 可以存储 null 的 key 和 value，但 null 作为键只能有一个，null 作为值可以有多个;HashTable 不允许有 null 键和 null 值，否则会抛出 NullPointerException
+HashMap 可以存储 null 的 key 和 value，但 null 作为键只能有一个，null 作为值可以有多个; HashTable 不允许有 null 键和 null 值，否则会抛出 NullPointerException
 
 ### 1.4.4. 初始容量大小和每次扩充容量大小的不同
 
@@ -122,7 +122,6 @@ HashMap 基于哈希表，它实现了 Map 接口，以键值对形式存储数�
 这个过程为，先将 A 复制到新的 hash 表中，然后接着复制 B 到链头 (A 的前边:B.next=A), 本来 B.next=null，到此也就结束了 (跟线程二一样的过程), 但是，由于线程二扩容的原因，将 B.next=A，所以，这里继续复制 A，让 A.next=B，由此，环形链表出现:B.next=A; A.next=B
 
 ![picture 5](../.vuepress/public/assets/images/1641168759424.png)  
-
 
 jdk 1.8 后解决了这个问题，但是还是不建议在多线程下使用 HashMap，因为多线程下使用 HashMap 还是会存在其他问题比如数据丢失。并发环境下推荐使用 ConcurrentHashMap .
 

@@ -65,14 +65,14 @@ MySQL 数据库的 QPS 大概都在 1w 左右 (4 核 8g) , 但是使用 Redis �
 
 1. 分布式锁：通过 Redis 来做分布式锁是一种比较常见的方式。通常情况下，都是基于 Redisson 来实现分布式锁
 1. 限流：一般是通过 Redis + Lua 脚本的方式来实现限流
-1. 消息队列:  Redis 自带的 list 数据结构可以作为一个简单的队列使用.Redis5.0 中增加的 Stream 类型的数据结构更加适合用来做消息队列。它比较类似于 Kafka，有主题和消费组的概念，支持消息持久化以及 ACK 机制。
+1. 消息队列: Redis 自带的 list 数据结构可以作为一个简单的队列使用. Redis5.0 中增加的 Stream 类型的数据结构更加适合用来做消息队列。它比较类似于 Kafka，有主题和消费组的概念，支持消息持久化以及 ACK 机制。
 1. 复杂业务场景：通过 Redis 以及 Redis 扩展 (比如 Redisson) 提供的数据结构，可以很方便地完成很多复杂的业务场景，比如通过 bitmap 统计活跃用户，通过 sorted set 维护排行榜。
 
 ## 1.7. Redis 常见数据结构以及使用场景分析
 
 ### 1.7.1. string
 
-1. 介绍 : string 数据结构是简单的 key-value 类型
+1. 介绍: string 数据结构是简单的 key-value 类型
 2. 常用命令：set, get, strlen, exists, decr, incr, setex 等等。
 3. 应用场景：存储信息，计数器
 
@@ -245,7 +245,7 @@ GuideGeGe
 1) value2
 ```
 
-### 1.7.5. sorted set
+### 1.7.5. zset (sorted set)
 
 1. 介绍：和 set 相比，sorted set 增加了一个权重参数 score，使得集合中的元素能够按 score 进行有序排列，还可以通过 score 的范围来获取元素的列表。
 2. 常用命令：zadd, zcard, zscore, zrange, zrevrange, zrem 等。

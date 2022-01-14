@@ -10,20 +10,21 @@
 
 #### 1.1.1.2. 岗位职责
 
-1. 参与团队项目开发配合
-1. 参与与彩票相关的业务研发与维护
-1. 参与新项目开发,老项目的维护等
+1. 参与项目研发，代码编写
+1. 参与交易所项目的业务学习与研究
+1. 参与攻克交易所业务难关
+1. 参与架构设计与项目标准化制定等
+1. 参与新技术预研
 
 #### 1.1.1.3. 岗位要求
 
-1. 掌握 springcloud 全家桶，熟悉 dubbo,nacos,rocketmq,kafka,mybatis 等
-1. 熟练使用 mysql,redis,spring cache 等缓存工具
-1. 对 linux 熟悉，常用的 linux 命令可以使用
-1. 熟悉 gitlab,jenkins 等 CI/CD 工具
-1. 熟悉 jira,禅道等工具
-1. 吃苦耐劳,对代码有洁癖
-
-薪资：30-40k
+1. 精通springboot ,springcloud,mybatis,nacos/apollo ，dubbo 等微服务，分布式框架
+1. 熟练使用 redis,memcache,mysql，rocketmq 等中间件，数据库等
+1. 对数据库有设计经验，项目UML分析有实战经验
+1. 对交易所有经验者，根据能力优先录用
+1. 良好的沟通能力，团队协作能力，抗压力，和解决困难的能力，良好的心态，积极的态度
+1. 有带队经验者优先录用
+1. 对k8s，docker,linux 等熟练使用者 优先录用
 
 ## 1.2. AG
 
