@@ -98,6 +98,10 @@ module.exports = {
         link: '/distributed/',
         children: [
           {
+            text: 'interview',
+            link: '/distributed/interview',
+          },
+          {
             text: 'zookeeper',
             link: '/distributed/zookeeper',
           },
@@ -112,12 +116,12 @@ module.exports = {
         link: '/additional/',
         children: [
           {
-            text: 'docker',
-            link: '/additional/docker',
-          },
-          {
             text: 'linux',
             link: '/additional/linux',
+          },
+          {
+            text: 'design-pattern',
+            link: '/additional/design-pattern',
           },
         ],
       },
@@ -150,7 +154,7 @@ module.exports = {
       '/distributed/': [
         {
           text: 'distributed',
-          children: ['zookeeper', 'dubbo'],
+          children: ['interview','zookeeper', 'dubbo'],
         },
       ],
 
@@ -176,7 +180,7 @@ module.exports = {
       '/additional/': [
         {
           text: 'additional',
-          children: ['docker', 'linux'],
+          children: ['linux', 'design-pattern'],
         },
       ],
     },
