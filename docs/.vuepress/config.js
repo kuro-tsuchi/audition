@@ -109,6 +109,10 @@ module.exports = {
             text: 'dubbo',
             link: '/distributed/dubbo',
           },
+          {
+            text: 'elasticSearch',
+            link: '/distributed/elasticSearch',
+          },
         ],
       },
       {
@@ -154,7 +158,7 @@ module.exports = {
       '/distributed/': [
         {
           text: 'distributed',
-          children: ['interview','zookeeper', 'dubbo'],
+          children: ['interview','zookeeper', 'dubbo','elasticSearch'],
         },
       ],
 
