@@ -1,5 +1,7 @@
 # 1. rabbitmq
 
+<https://blog.csdn.net/xxyh1234/article/details/121821850>
+
 ## 1.1. rabbitmq的架构设计
 
 ![picture 5](../.vuepress/public/assets/images/1644549672931.png)  
