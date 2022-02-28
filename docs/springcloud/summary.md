@@ -2,6 +2,8 @@
 
 ![picture 11](../.vuepress/public/assets/images/1640258489692.png)
 
+![picture 1](../.vuepress/public/assets/images/1646002916241.png)  
+
 ## 1.1. 什么是 Spring Cloud
 
 Spring Cloud 就是微服务系统架构的一站式解决方案, Spring Cloud 为我们提供了一套简易的编程模型, 使我们能在 Spring Boot 的基础上轻松地实现微服务项目的构建. 包括 服务发现注册, 配置中心, 消息总线, 负载均衡, 断路器, 数据监控等操作
@@ -144,7 +146,6 @@ public class TestController {
 
 ![picture 21](../.vuepress/public/assets/images/1641169264827.png)  
 ![picture 22](../.vuepress/public/assets/images/1641169276865.png)  
-
 
 ### 1.4.1. 什么是微服务网关?
 

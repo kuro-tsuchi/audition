@@ -1,5 +1,5 @@
 <!-- ---
-sidebar: false
+sidebar: true
 --- -->
 
 # 1. RocketMQ
@@ -40,6 +40,8 @@ RocketMQ 是一个队列模型的消息中间件，具有高性能，高可靠�
 所以总结来说，RocketMQ 通过使用在一个 Topic 中配置多个队列并且每个队列维护每个消费者组的消费位置，实现了主题模式/发布订阅模式 .
 
 ## 1.2. RocketMQ 的架构图
+
+![picture 2](../.vuepress/public/assets/images/1645065986123.png)  
 
 RocketMQ 技术架构中有四大角色 NameServer,  Broker,  Producer,  Consumer
 

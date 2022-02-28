@@ -77,6 +77,20 @@ module.exports = {
             text: 'rocketmq',
             link: '/mq/rocketmq',
           },
+          {
+            text: 'rabbitmq',
+            link: '/mq/rabbitmq',
+          },
+        ],
+      },
+      {
+        text: 'es',
+        link: '/es/',
+        children: [
+          {
+            text: 'elasticSearch',
+            link: '/es/elasticSearch',
+          },
         ],
       },
       {
@@ -109,12 +123,9 @@ module.exports = {
             text: 'dubbo',
             link: '/distributed/dubbo',
           },
-          {
-            text: 'elasticSearch',
-            link: '/distributed/elasticSearch',
-          },
         ],
       },
+
       {
         text: 'additional',
         link: '/additional/',
@@ -124,8 +135,8 @@ module.exports = {
             link: '/additional/linux',
           },
           {
-            text: 'design-pattern',
-            link: '/additional/design-pattern',
+            text: 'designPattern',
+            link: '/additional/designPattern',
           },
         ],
       },
@@ -158,7 +169,7 @@ module.exports = {
       '/distributed/': [
         {
           text: 'distributed',
-          children: ['interview','zookeeper', 'dubbo','elasticSearch'],
+          children: ['interview', 'zookeeper', 'dubbo', 'elasticSearch'],
         },
       ],
 
@@ -178,13 +189,19 @@ module.exports = {
       '/mq/': [
         {
           text: 'mq',
-          children: ['summary', 'rocketmq', 'kafka'],
+          children: ['summary', 'rocketmq', 'kafka', 'rabbitmq'],
+        },
+      ],
+      '/es/': [
+        {
+          text: 'es',
+          children: ['elasticSearch'],
         },
       ],
       '/additional/': [
         {
           text: 'additional',
-          children: ['linux', 'design-pattern'],
+          children: ['linux', 'designPattern'],
         },
       ],
     },

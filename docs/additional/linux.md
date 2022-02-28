@@ -151,9 +151,23 @@ sed '/^$/d' example.txt 从 example.txt 文件中删除所有空白行 (搜索�
 ```bash
 -f 循环读取 (常用于查看递增的日志文件)
 -n<行数> 显示行数 (从后向前)
+
+
+tail  -n  10   test.log   查询日志尾部最后10行的日志;
+tail  -n +10   test.log   查询10行之后的所有日志;
+tail  -fn 10   test.log   循环实时查看最后1000行记录(最常用的)
+tail -fn 1000 test.log | grep '关键字'
+
 ```
 
-### 1.5.3. more
+### 1.5.3. head
+
+```bash
+head -n  10  test.log   查询日志文件中的头10行日志;
+head -n -10  test.log   查询日志文件除了最后10行的其他所有日志;
+```
+
+### 1.5.4. more
 
 功能类似于 cat, more 会以一页一页的显示方便使用者逐页阅读，
 最基本的指令就是按空白键 (space) 就往下一页显示，按 b 键就会往回 (back) 一页显示。
@@ -163,7 +177,7 @@ more +3 text.txt #显示文件中从第 3 行起的内容
 ls -l | more -5  #在所列出文件目录详细信息，借助管道使每次显示 5 行
 ```
 
-### 1.5.4. less
+### 1.5.5. less
 
 less 与 more 类似，但使用 less 可以随意浏览文件，而 more 仅能向前移动，却不能向后移动，而且 less 在查看之前不会加载整个文件
 
@@ -171,14 +185,14 @@ less 与 more 类似，但使用 less 可以随意浏览文件，而 more 仅能
 ps -a | less -N  #-N  显示每行的行号   # ps 查看进程信息并通过 less 分页显示
 ```
 
-### 1.5.5. paste 命令
+### 1.5.6. paste 命令
 
 ```bash
 paste file1 file2 合并两个文件或两栏的内容
 paste -d '+' file1 file2 合并两个文件或两栏的内容，中间用"+"区分
 ```
 
-### 1.5.6. sort 命令
+### 1.5.7. sort 命令
 
 ```bash
 sort file1 file2 排序两个文件的内容
@@ -187,7 +201,7 @@ sort file1 file2 | uniq -u 删除交集，留下其他的行
 sort file1 file2 | uniq -d 取出两个文件的交集 (只留下同时存在于两个文件中的文件)
 ```
 
-### 1.5.7. comm 命令
+### 1.5.8. comm 命令
 
 ```bash
 comm -1 file1 file2 比较两个文件的内容只删除 'file1' 所包含的内容
