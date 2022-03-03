@@ -52,16 +52,6 @@ module.exports = {
         ],
       },
       {
-        text: 'springcloud',
-        link: '/springcloud/',
-        children: [
-          {
-            text: 'summary',
-            link: '/springcloud/summary',
-          },
-        ],
-      },
-      {
         text: 'mq',
         link: '/mq/',
         children: [
@@ -88,8 +78,8 @@ module.exports = {
         link: '/es/',
         children: [
           {
-            text: 'elasticSearch',
-            link: '/es/elasticSearch',
+            text: 'summary',
+            link: '/es/summary',
           },
         ],
       },
@@ -112,8 +102,12 @@ module.exports = {
         link: '/distributed/',
         children: [
           {
-            text: 'interview',
-            link: '/distributed/interview',
+            text: 'summary',
+            link: '/distributed/summary',
+          },
+          {
+            text: 'springcloud',
+            link: '/distributed/springcloud',
           },
           {
             text: 'zookeeper',
@@ -169,17 +163,14 @@ module.exports = {
       '/distributed/': [
         {
           text: 'distributed',
-          children: ['interview', 'zookeeper', 'dubbo', 'elasticSearch'],
+          children: [
+            'summary',
+            'springcloud',
+            'zookeeper',
+            'dubbo',
+          ],
         },
       ],
-
-      '/springcloud/': [
-        {
-          text: 'springcloud',
-          children: ['summary'],
-        },
-      ],
-
       '/database/': [
         {
           text: 'database',
@@ -195,7 +186,7 @@ module.exports = {
       '/es/': [
         {
           text: 'es',
-          children: ['elasticSearch'],
+          children: ['summary'],
         },
       ],
       '/additional/': [
