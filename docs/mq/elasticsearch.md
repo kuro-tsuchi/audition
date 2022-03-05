@@ -1,28 +1,20 @@
-# 1. summary
+# 1. elasticsearch
 
 <https://www.kuangstudy.com/bbs/1354069127022583809>
 
 ## 1.1. 定义
 
-Elasticsearch 是一个实时分布式搜索和分析引擎。es 使用 java 开发并使用 Lucene 作
-为其核心来实现所有索引和搜索的功能，它的目的是通过简单的 RESTful API 来隐藏
-Lucene 的复杂性，从而让全文搜索变得简单。
-
-Kibana 是一个针对 ElasticSearch 的开源分析及可视化平台,用来搜索、查看交互存储在
-Elasticsearch 索引中的数据。使用 Kibana ,可以通过各种图表进行高级数据分析及展示
-。
+Elasticsearch 是一个基于 Lucene、分布式、通过 Restful 方式进行交互的近实时搜索平台框架
+Logstash 是 ELK 的中央数据流引擎,用于从不同目标(文件/数据存储/MQ )收集的不同格式数据,经过过滤后支持输出到不同目的地(文件/MQ/redis/elasticsearch/kafka 等)。
+Kibana 可以将 elasticsearch 的数据通过友好的页面展示出来 ,提供实时分析的功能。
 
 ![picture 1](../.vuepress/public/assets/images/1646090458425.png)
 
 收集清洗数据(Logstash) ==> 搜索、存储(ElasticSearch) ==> 展示(Kibana) ELK 是
 Elasticsearch、Logstash、 Kibana 三大开源框架首字母大写简称。市面上也被成为
-Elastic Stack。Elasticsearch 是一个基于 Lucene、分布式、通过 Restful 方式进行交
-互的近实时搜索平台框架 Logstash 是 ELK 的中央数据流引擎,用于从不同目标(文件/数据
-存储/MQ )收集的不同格式数据,经过过滤后支持输出到不同目的地(文件
-/MQ/redis/elasticsearch/kafka 等)。 Kibana 可以将 elasticsearch 的数据通过友好的
-页面展示出来 ,提供实时分析的功能。
+Elastic Stack。
 
-倒排索引（Lucene 索引底层）
+## 倒排索引（Lucene 索引底层）
 
 简单说就是 按（文章关键字，对应的文档\<0 个或多个\>）形式建立索引，根据关键字就
 可直接查询对应的文档（含关键字的），无需查询每一个文档，如下图
@@ -250,6 +242,7 @@ public void testBulk() throws IOException {
 ```
 
 ## 1.6. 为什么要使用Elasticsearch?
+
 ​
 因为在我们商城中的数据，将来会非常多，所以采用以往的模糊查询，模糊查询前置配置，会放弃索引，导致商品查询是全表扫面，在百万级别的数据库中，效率非常低下，而我们使用ES做一个全文索引，我们将经常查询的商品的某些字段，比如说商品名，描述、价格还有id这些字段我们放入我们索引库里，可以提高查询速度。
 

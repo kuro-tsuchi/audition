@@ -71,15 +71,9 @@ module.exports = {
             text: 'rabbitmq',
             link: '/mq/rabbitmq',
           },
-        ],
-      },
-      {
-        text: 'es',
-        link: '/es/',
-        children: [
           {
-            text: 'summary',
-            link: '/es/summary',
+            text: 'elasticsearch',
+            link: '/mq/elasticsearch',
           },
         ],
       },
@@ -180,7 +174,7 @@ module.exports = {
       '/mq/': [
         {
           text: 'mq',
-          children: ['summary', 'rocketmq', 'kafka', 'rabbitmq'],
+          children: ['summary', 'rocketmq', 'kafka', 'rabbitmq','elasticsearch'],
         },
       ],
       '/es/': [
