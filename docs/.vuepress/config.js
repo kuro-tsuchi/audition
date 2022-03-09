@@ -128,6 +128,18 @@ module.exports = {
           },
         ],
       },
+
+      {
+        text: 'golang',
+        link: '/golang/',
+        children: [
+          {
+            text: 'one',
+            link: '/golang/one',
+          }
+        ],
+      },
+
       {
         text: 'interview',
         link: '/interview/',
@@ -187,6 +199,12 @@ module.exports = {
         {
           text: 'additional',
           children: ['linux', 'designPattern'],
+        },
+      ],
+      '/golang/': [
+        {
+          text: 'golang',
+          children: ['one'],
         },
       ],
     },

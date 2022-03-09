@@ -224,13 +224,13 @@ RabbitMQ不会为未ack的消息设置超时时间,它判断此消息是否需�
 
 `channel.queueDeclare(QUEUE_NAME, false, false, false, null);`
 
-## 1.11. rabbitmq 如何生成死信队列
+## 1.10. rabbitmq 如何生成死信队列
 
 1. 消息被否定确认，使用 channel.basicNack 或 channel.basicReject ，并且此时requeue 属性被设置为false。
 1. 消息在队列的存活时间超过设置的TTL时间。
 1. 消息队列的消息数量已经超过最大队列长度。
 
-## rabbitmq 如何生成延时队列
+## 1.11. rabbitmq 如何生成延时队列
 
 rabbitmq 本身是不直接支持延时队列的，但是可以基于消息的存活时间 TTL（Time To Live）和死信交换机 DLX（Dead Letter Exchanges）实现RabbitMQ 的延时队列
 , RabbitMQ 可以对队列或消息各自设置存活时间, 过期的消息通过绑定的死信交换机，路由到指定的死信队列，消费者实际上消费的是死信队列上的消息以此达到延时效果。
