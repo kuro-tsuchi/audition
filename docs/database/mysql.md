@@ -449,3 +449,16 @@ MySQL主从复制的两种情况:同步复制和异步复制,实际复制架构�
 1. 主节点接收到来自从节点的 I/O 请求后,通过负责复制的 I/O 进程(log Dump Thread)根据请求信息读取指定日志指定位置之后的日志信息,返回给从节点.返回信息中除了日志所包含的信息之外,还包括本次返回的信息的 Binlog file 以及 Binlog position(Binlog 下一个数据读取位置).
 1. 从节点的 I/O 进程接收到主节点发送过来的日志内容,日志文件及位置点后,将接收到的日志内容更新到本机的 relay log 文件(Mysql-relay-bin.xxx)的最末端,并将读取到的 Binlog文件名和位置保存到master-info 文件中,以便在下一次读取的时候能够清楚的告诉 Master :" 我需要从哪个 Binlog 的哪个位置开始往后的日志内容,请发给我".
 1. Slave 的 SQL 线程检测到relay log 中新增加了内容后,会将 relay log 的内容解析成在能够执行 SQL 语句,然后在本数据库中按照解析出来的顺序执行,并在 relay log.info 中记录当前应用中继日志的文件名和位置点.
+
+## 什么是JDBC，在什么时候会用到它？
+
+JDBC (Java DataBase Connection，Java数据库连接)，可以用它来操作关系型数据库，执行SQL查询，存储过程，并处理返回的结果。
+
+```java
+Connection con = null;
+// load the Driver Class
+Class.forName("com.mysql.jdbc.Driver");
+// create the connection now
+con = DriverManager.getConnection("jdbc:mysql://localhost:3306/UserDB", user, password);
+
+```
