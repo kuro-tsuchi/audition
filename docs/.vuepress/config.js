@@ -134,8 +134,12 @@ module.exports = {
         link: '/golang/',
         children: [
           {
-            text: 'one',
-            link: '/golang/one',
+            text: 'basic',
+            link: '/golang/basic',
+          },
+          {
+            text: 'concurrency',
+            link: '/golang/concurrency',
           }
         ],
       },
@@ -204,7 +208,7 @@ module.exports = {
       '/golang/': [
         {
           text: 'golang',
-          children: ['one'],
+          children: ['basic', 'concurrency'],
         },
       ],
     },
