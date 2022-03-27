@@ -140,6 +140,14 @@ module.exports = {
           {
             text: 'concurrency',
             link: '/golang/concurrency',
+          },
+          {
+            text: 'grpc',
+            link: '/golang/grpc',
+          },
+          {
+            text: 'encryption',
+            link: '/golang/encryption',
           }
         ],
       },
@@ -208,7 +216,7 @@ module.exports = {
       '/golang/': [
         {
           text: 'golang',
-          children: ['basic', 'concurrency'],
+          children: ['basic', 'concurrency','grpc', 'encryption'],
         },
       ],
     },
