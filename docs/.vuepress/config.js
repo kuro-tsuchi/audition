@@ -119,6 +119,10 @@ module.exports = {
         link: '/additional/',
         children: [
           {
+            text: 'network',
+            link: '/additional/network',
+          },
+          {
             text: 'linux',
             link: '/additional/linux',
           },
@@ -210,7 +214,7 @@ module.exports = {
       '/additional/': [
         {
           text: 'additional',
-          children: ['linux', 'designPattern'],
+          children: ['network', 'linux', 'designPattern'],
         },
       ],
       '/golang/': [

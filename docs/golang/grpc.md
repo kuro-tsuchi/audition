@@ -2,7 +2,7 @@
 
 ## 1.1. 定义
 
-gRPC 是一个由 google 开源的高性能、通用RPC远程服务调用框架，基于 ProtoBuf(Protocol Buffers) 序列化协议开发
+gRPC 是一个由 google 开源的高性能RPC远程服务调用框架，基于 ProtoBuf(Protocol Buffers) 序列化协议开发
 
 ## 1.2. 为什么选择 grpc
 
@@ -55,8 +55,8 @@ protocolBuffer 是Google出品的序列化工具, 采用了二进制字节的序
 // proto文件 messages.proto
 package zxwj;
 syntax = "proto3";
-message helloworld
-{
+
+message helloworld{
    string zzuid = 123;  
    string zzstatus = 0;
 }
