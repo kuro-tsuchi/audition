@@ -5,6 +5,7 @@ module.exports = {
   port: 9000,
   base: '/audition/',
   themeConfig: {
+    sidebarDepth: 1,
     logo: '/assets/images/Flag-map-of-taiwan.png',
     navbar: [
       {
@@ -60,20 +61,17 @@ module.exports = {
             link: '/mq/summary',
           },
           {
+            text: 'rabbitmq',
+            link: '/mq/rabbitmq',
+          },
+    
+          {
             text: 'kafka',
             link: '/mq/kafka',
           },
           {
             text: 'rocketmq',
             link: '/mq/rocketmq',
-          },
-          {
-            text: 'rabbitmq',
-            link: '/mq/rabbitmq',
-          },
-          {
-            text: 'elasticsearch',
-            link: '/mq/elasticsearch',
           },
         ],
       },
@@ -89,6 +87,10 @@ module.exports = {
             text: 'redis',
             link: '/database/redis',
           },
+          {
+            text: 'elasticsearch',
+            link: '/database/elasticsearch',
+          },
         ],
       },
       {
@@ -100,10 +102,6 @@ module.exports = {
             link: '/distributed/summary',
           },
           {
-            text: 'springcloud',
-            link: '/distributed/springcloud',
-          },
-          {
             text: 'zookeeper',
             link: '/distributed/zookeeper',
           },
@@ -111,9 +109,12 @@ module.exports = {
             text: 'dubbo',
             link: '/distributed/dubbo',
           },
+          {
+            text: 'springcloud',
+            link: '/distributed/springcloud',
+          },
         ],
       },
-
       {
         text: 'additional',
         link: '/additional/',
@@ -132,7 +133,6 @@ module.exports = {
           },
         ],
       },
-
       {
         text: 'golang',
         link: '/golang/',
@@ -152,13 +152,22 @@ module.exports = {
           {
             text: 'encryption',
             link: '/golang/encryption',
-          }
+          },
         ],
       },
-
       {
         text: 'interview',
         link: '/interview/',
+      },
+      {
+        text: 'business',
+        link: '/business/',
+        children: [
+          {
+            text: 'summary',
+            link: '/business/summary',
+          },
+        ],
       },
     ],
     sidebar: {
@@ -185,24 +194,24 @@ module.exports = {
       '/distributed/': [
         {
           text: 'distributed',
-          children: [
-            'summary',
-            'springcloud',
-            'zookeeper',
-            'dubbo',
-          ],
+          children: ['summary', 'zookeeper', 'dubbo' ,'springcloud',],
         },
       ],
       '/database/': [
         {
           text: 'database',
-          children: ['mysql', 'redis'],
+          children: ['mysql', 'redis',        'elasticsearch',],
         },
       ],
       '/mq/': [
         {
           text: 'mq',
-          children: ['summary', 'rocketmq', 'kafka', 'rabbitmq','elasticsearch'],
+          children: [
+            'summary',
+            'rabbitmq',
+            'rocketmq',
+            'kafka',
+          ],
         },
       ],
       '/es/': [
@@ -220,7 +229,13 @@ module.exports = {
       '/golang/': [
         {
           text: 'golang',
-          children: ['basic', 'concurrency','grpc', 'encryption'],
+          children: ['basic', 'concurrency', 'grpc', 'encryption'],
+        },
+      ],
+      '/business/': [
+        {
+          text: 'business',
+          children: ['summary'],
         },
       ],
     },
