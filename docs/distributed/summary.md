@@ -201,12 +201,7 @@ Boolean nx = redis.opsForValue().setIfAbsent("key", "value", 20, TimeUnit.MINUTE
 
 ## 1.7. Redission 如何做分布式锁?
 
-redisson 是 Redis 官方的分布式锁组件. Redisson 是一个在 Redis 的基础上实现的
-Java 驻内存数据网格.它不仅提供了一系列的分布式的 Java 常用对象,还实现了可重入锁
-(Reentrant Lock),公平锁(Fair Lock,联锁(MultiLock), 红锁(RedLock), 读写锁
-(ReadWriteLock)等,还提供了许多分布式服务.Redisson 提供了使用 Redis 的最简单和最
-便捷的方法.Redisson 的宗旨是促进使用者对 Redis 的关注分离(Separation of
-Concern),从而让使用者能够将精力更集中地放在处理业务逻辑上.
+redisson 是 Redis 官方的分布式锁组件. Redisson 是一个在 Redis 的基础上实现的Java 驻内存数据网格.它不仅提供了一系列的分布式的 Java 常用对象,还实现了可重入锁(Reentrant Lock),公平锁(Fair Lock,联锁(MultiLock), 红锁(RedLock), 读写锁(ReadWriteLock)等,还提供了许多分布式服务.
 
 ```java
 RLock lock = redisson.getLock("myLock");
@@ -266,10 +261,7 @@ public void testRedLock(RedissonClient redisson1,RedissonClient redisson2, Redis
 
 ### 1.10.1. 顺序节点特性
 
-使用 ZooKeeper 的顺序节点特性,假如我们在/lock/目录下创建 3 个节点,ZK 集群会按照
-发起创建的顺序来创建节点,节点分别为
-/lock/0000000001,/lock/0000000002,/lock/0000000003,最后一位数是依次递增的,节点名
-由 zk 来完成.
+使用 ZooKeeper 的顺序节点特性,假如我们在/lock/目录下创建 3 个节点,ZK 集群会按照发起创建的顺序来创建节点,节点分别为/lock/0000000001,/lock/0000000002,/lock/0000000003,最后一位数是依次递增的,节点名由 zk 来完成.
 
 ### 1.10.2. 临时节点特性
 
@@ -489,7 +481,6 @@ def unlock:
 源方序列号 seq,这个两个字段在提供方系统里面做联合唯一索引,这样当第三方调用时,先
 在本方系统里面查询一下,是否已经处理过,返回相应处理结果;没有处理过,进行相应处理,
 返回结果.
-
 
 ## 1.19. 认证(Authentication)和授权(Authorization)的区别是什么?
 
