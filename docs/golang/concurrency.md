@@ -1,4 +1,5 @@
 # 1. concurrency
+Do not communicate by sharing memory. Instead, share memory by communicating.
 
 ## 1.1. 并发编程概念是什么
 
@@ -737,11 +738,19 @@ select {
 range能够感知channel的关闭,当channel被发送数据的协程关闭时,range就会结束,接着退出for循环.
 
 ```go
-go func(in <-chan int) {
-    for x := range in {
-        fmt.Printf("Process %d\n", x)
-    }
-}(in)
+func main() {
+	inCh := make(chan int, 1)
+	inCh <- 1
+	close(inCh)
+	go func(in <-chan int) {
+		// Using for-range to exit goroutine
+		// range has the ability to detect the close/end of a channel
+		for x := range in {
+			fmt.Printf("Process %d\n", x)
+		}
+	}(inCh)
+	time.Sleep(1e9)
+}
 ```
 
 ### 1.20.2. 使用select case ,ok退出
@@ -851,25 +860,19 @@ import (
     "fmt"
 )
 
-func printString(str string) {
-    for _, data: = range str {
-        fmt.Printf("%c", data)
-    }
-    fmt.Printf("\n")
-}
-
 var ch = make(chan int)
 var tongBu = make(chan int)
 
 func person1() {
     printString("Gerald")
+	fmt.Println("person1")
     tongBu < -1
     ch < -1
 }
 
 func person2() { 
     < -tongBu
-    printString("Seligman")
+	fmt.Println("person2")
     ch < -2
 }
 
@@ -892,6 +895,7 @@ func main() {
 // ch 用来子协程与主协程之间的同步
 // tongBu 用来两个协程之间的同步
 // 主协程阻塞等待数据,每当一个子协程执行完后,就会往 ch 里面写一个数据,主协程收到后会使 count–,
+
 // 当 count 减为 0,关闭 ch,主协程将不阻塞在 range ch.
 ```
 
@@ -911,44 +915,36 @@ import (
    "sync"
 )
 
-func printString(str string) {
-   for _, data := range str {
-      fmt.Printf("%c", data)
-   }
-   fmt.Printf("\n")
-}
-
 // 使用 sync.WaitGroup 的方式来实现主协程等待其他子协程
-var wg sync.WaitGroup
 
+var wg sync.WaitGroup
 var tongBu = make(chan int)
 
 func person1() {
-   printString("Gerald")
-   tongBu <- 1
-
-   wg.Done()
+	fmt.Println("person1")
+	tongBu <- 1
+	wg.Done()
 }
 
 func person2() {
-   <- tongBu
-   printString("Seligman")
-
-   wg.Done()
+	<-tongBu
+	fmt.Println("person2")
+	wg.Done()
 }
 
 func main() {
-   wg.Add(2)
-   // 目的:使用 channel 来实现 person1 先于 person2 执行
-   go person1()
-   go person2()
-   defer close(tongBu)
-   wg.Wait()
+	wg.Add(2)
+	// 目的:使用 channel 来实现 person1 先于 person2 执行
+	go person2()
+	go person1()
+	defer close(tongBu)
+	wg.Wait()
 }
+
+
 ```
 
 ## 1.22. 知道哪些 sync 同步原语?各有什么作用?
 
 sync 包中提供了用于同步的一些基本原语,包括常见的互斥锁 Mutex 与读写互斥锁 RWMutex 以及 Once,WaitGroup.
-
-> 原语,一般是指由若干条指令组成的程序段,用来实现某个特定功能,在执行过程中不可被中断
+原语,一般是指由若干条指令组成的程序段,用来实现某个特定功能,在执行过程中不可被中断

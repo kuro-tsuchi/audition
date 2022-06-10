@@ -2,7 +2,7 @@
 
 ## 1.1. go 有什么优势或者特点?
 
-1. go 允许跨平台编译,编译出来的是二进制的可执行文件,直接部署在对应系统上即可运行
+1. go 允许跨平台编译,编译出来的是二进制的可执行文件,部署在对应系统上即可运行
 1. go 天生支持高并发,通过 goroutine 和 channel 实现
 1. go 是静态类型语言,可以在编译的时候检查出来隐藏的大多数问题
 1. go 的代码风格是强制性的统一
@@ -50,13 +50,13 @@ func main() {
 
 new 函数根据传入的类型分配内存空间,并返回指向该类型内存地址的指针, 同时 new 函数会把分配的内存置为零值
 
-## 1.4. go 语言如何高效的进行字符串拼
+## 1.4. go 语言如何高效的进行字符串拼接
 
 通过 benchmark 对比, 无论什么情况下使用 strings.builder 进行字符串拼接都是最高效的; 如果进行少量的字符串拼接时,直接使用+操作符是最方便也是性能最高的
 
 ### 1.4.1. 原生拼接方式"+"
 
-go 语言原生支持使用+操作符直接对两个字符串进行拼接,使用例子如下:
+go 语言原生支持使用+操作符直接对两个字符串进行拼接, 会对字符串进行遍历,计算并开辟一个新的空间来存储原来的两个字符串.
 
 ```go
 var s string
@@ -64,8 +64,6 @@ s += "asong"
 s += "真帅"
 fmt.Println(s)
 ```
-
-这种方式使用起来最简单,基本所有语言都有提供这种方式,使用+操作符进行拼接时,会对字符串进行遍历,计算并开辟一个新的空间来存储原来的两个字符串.
 
 ### 1.4.2. Strings.builder
 
@@ -79,7 +77,14 @@ go 语言提供了一个专门操作字符串的库 strings,使用 strings.Build
  fmt.Println(s)
 ```
 
-### 1.4.3. 字符串格式化函数 fmt.Sprintf
+### 1.4.3. strings.join
+
+```go
+baseSlice := []string{"asong", "真帅"}
+strings.Join(baseSlice, "")
+```
+
+### 1.4.4. 字符串格式化函数 fmt.Sprintf
 
 ```go
 str := "asong"
@@ -88,23 +93,14 @@ str = fmt.Sprintf("%s%s", str, str)
 
 fmt.Sprintf 实现原理主要是使用到了反射,反射会产生性能的损耗,影响性能
 
-### 1.4.4. bytes.Buffer
+### 1.4.5. bytes.Buffer
 
-因为 string 类型底层就是一个 byte 数组,所以我们就可以 go 语言的 bytes.Buffer 进
-行字符串拼接.bytes.Buffer 是一个一个缓冲 byte 类型的缓冲器,这个缓冲器里存放着都
-是 byte.
+因为 string 类型底层就是一个 byte 数组,所以我们就可以 go 语言的 bytes.Buffer 进行字符串拼接.bytes.Buffer 是一个一个缓冲 byte 类型的缓冲器,这个缓冲器里存放着都是 byte.
 
 ```go
 buf := new(bytes.Buffer)
 buf.WriteString("asong")
 buf.String()
-```
-
-### 1.4.5. strings.join
-
-```go
-baseSlice := []string{"asong", "真帅"}
-strings.Join(baseSlice, "")
 ```
 
 ### 1.4.6. 切片 append
@@ -155,7 +151,6 @@ import (
 )
 func main() {
  slice := []int{0, 1, 2, 3}
- myMap := make(map[int]*int)
  for _,v :=range slice{
   if v==1 {
    v=100
@@ -187,16 +182,17 @@ import (
     "fmt"
 )
 func main() {
-    s :=[]int{1,2,3,4}
-    m :=make(map[int]*int)
-    for k,v:=range s{
-       m[k]=&v
-    }
-    for key, value := range m {
-    fmt.Printf("map[%v]=%v\n", key, *value)
-    }
-    fmt.Println(m)
+ s := []int{1, 2, 3, 4}
+ m := make(map[int]*int)
+ for k, v := range s {
+  m[k] = &v
+ }
+ for key, value := range m {
+  fmt.Printf("map[%v]=%v\n", key, *value)
+ }
+ fmt.Println(m)
 }
+
 // map[2]=4
 // map[3]=4
 // map[0]=4
@@ -307,7 +303,7 @@ func main() {
 
 ## 1.14. golang map 是线程安全的吗? go 如何解决 Map 并发读写安全问题 ?
 
-map不是线程安全的, map 变量为引用类型变量,并发写时,多个协程同时操作一个内存,类似于多线程操作同一个资源会发生竞争关系,共享资源会遭到破坏
+map不是线程安全的, map 变量为引用类型变量,并发写时,多个协程同时操作一个内存会发生竞争关系
 
 ### 1.14.1. 使用sync.Map或第三方包 "concurrent-map"
 
@@ -388,9 +384,9 @@ func main() {
 
 ## 1.16. 空 map 和未初始化 map 注意事项
 
-### 1.16.1. 空 map , 已初始化map
+### 1.16.1. 空 map (已初始化map)
 
-空map是已经初始化map, 可以正常取赋值,  断定 map 是空还是 nil, 需要通过 map == nil 来判断. 因为通过 fmt 打印 map 时,空 map 和 nil map 结果是一样的
+空map可以正常取赋值,  断定 map 是空还是 nil, 需要通过 map == nil 来判断. 因为通过 fmt 打印 map 时,空 map 和 nil map 结果是一样的
 
 ```go
 // 使用make函数初始化map
@@ -408,8 +404,8 @@ if m1 != nil {
 ```go
 func main() {
 var m1 map[string]string
-fmt.Printf("空map 取值: %v\n", m1["1"]) // 空map 取值:
-m1["1"] = "1"                        //  空map 赋值: panic: assignment to entry in nil map
+fmt.Printf("空map 取值: %v\n", m1["1"]) // 
+m1["1"] = "1"                        //   panic: assignment to entry in nil map
 }
 ```
 
@@ -559,34 +555,71 @@ golang 中的分布式锁可使用 etcd 进行实现,实现原理如下:
 
 ## 1.24. go 实现 set 类型
 
-go 中是不提供 Set 类型的,Set 是一个集合,其本质就是一个 List,只是 List 里的元素不能重复.
-
-go 提供了 map 类型,但是我们知道,map 类型的 key 是不能重复的,因此,我们可以利用这
-一点,来实现一个 set.那 value 呢?value 我们可以用一个常量来代替,比如一个空结构体,
-实际上空结构体不占任何内存,使用空结构体,能够帮我们节省内存空间,提高性能
+go 没有Set 类型的,Set 可以看做元素不能重复的list, go 提供了 map 类型, map 类型的 key 是不能重复的, 可以来实现一个 set.value 可以用一个常量来代替,比如一个空结构体,空结构体不占任何内存
 
 ```go
-// 下面看看两种结构体的声明方法
-
-// 这种形式的声明会返回一个指向该结构体的指针
 type Empty struct { }
 
-func main(){
-    empty := new(Empty)
-    fmt.Println(unsafe.Sizeof(empty)) //8
+//set类型
+type Set struct {
+    m map[int]Empty
+}
+//返回一个set
+func SetFactory() *Set{
+    return &Set{
+        m:map[int]Empty{},
+    }
+}
+//添加元素
+func (s *Set) Add(val int) {
+    s.m[val] = empty
 }
 
-// 这种结构体的声明就是一个随处可用的空缓存
+//删除元素
+func (s *Set) Remove(val int) {
+    delete(s.m, val)
+}
 
-var empty Empty
-fmt.Println(unsafe.Sizeof(empty)) //0
+//获取长度
+func (s *Set) Len() int {
+    return len(s.m)
+}
+
+//清空set
+func (s *Set) Clear() {
+    s.m = make(map[int]Empty)
+}
+
+//遍历set
+func (s *Set) Traverse(){
+    for v := range s.m {
+        fmt.Println(v)
+    }
+}
+
+//排序输出 
+func (s *Set) SortTraverse(){
+    vals := make([]int, 0, s.Len())
+
+    for v := range s.m {
+        vals = append(vals, v)
+    }
+
+    //排序
+    sort.Ints(vals)
+
+    for _, v := range vals {
+        fmt.Println(v)
+    }
+}
+
 ```
 
 ## 1.25. 了解空指针吗
 
 `var  ptr *int`
 
-当一个指针被定义后没有分配到任何变量时,它的值为 nil, 即为空指针. nil代表零值或空值.
+当一个指针被声明而未初始化时,它的值为 nil, 即为空指针. nil代表零值或空值.
 
 ## 1.26. 内存逃逸
 
@@ -837,8 +870,7 @@ func b() (i int) { // 提前声明了返回值i
 
 不建议在编写普通函数时也经常性使用这种特性
 
-panic 终止程序的运行,recover 捕获异常,程序在发生错误后,我们能够做一些处理,保证程
-序可以继续运行,那么这时候,我们就需要使用异常恢复,即 recover.golang 中的 recover
+panic 终止程序的运行,recover 捕获异常,程序在发生错误后,我们能够做一些处理,保证程序可以继续运行,那么这时候,我们就需要使用异常恢复,即 recover.golang 中的 recover
 一般都是配套 defer 一起使用.
 
 ```go
