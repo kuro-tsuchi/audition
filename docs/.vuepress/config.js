@@ -138,6 +138,10 @@ module.exports = {
         link: '/golang/',
         children: [
           {
+            text: 'codingstandard',
+            link: '/golang/codingstandard',
+          },
+          {
             text: 'basic',
             link: '/golang/basic',
           },
@@ -229,7 +233,7 @@ module.exports = {
       '/golang/': [
         {
           text: 'golang',
-          children: ['basic', 'concurrency', 'grpc', 'encryption'],
+          children: ['codingstandard','basic', 'concurrency', 'grpc', 'encryption'],
         },
       ],
       '/business/': [

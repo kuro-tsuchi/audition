@@ -1,34 +1,43 @@
 # 1. concurrency
+
 Do not communicate by sharing memory. Instead, share memory by communicating.
 
-## 1.1. 并发编程概念是什么
+## 1.1. 并发和并行的区别是什么
 
-并发是同一实体上的多个事件在同一时间间隔发生.
+1. 并发: 同一时间段, 多个任务都在执行
+1. 并行: 单位时间内, 多个任务同时执行.
 
-并发编程是指在一台处理器上同时处理多个任务. 并发编程的目标是充分的利用处理器的每一个核,以达到最高的处理性能.
+## 1.2. golang 如何安全读写共享变量
 
-### 1.1.1. 并发和并行的区别是什么
-
-1. 并发是在同一实体上的多个事件, 并行是在不同实体上的多个事件
-1. 并发是多个事件在同一时间间隔发生, 并行是多个事件在同一时刻发生;
-1. 并发是一台处理器上同时处理多个任务,并行是在多台处理器上同时处理多个任务.
-
-## 1.2. golang中除了加Mutex锁以外还有哪些方式安全读写共享变量
-
-### 1.2.1. mutext加锁 安全读写共享变量
+### 1.2.1. mutext加锁安全读写共享变量
 
 ```go
-var (
- mu      sync.Mutex
- balance int
-)
+func main() {
+//  var mutex sync.Mutex
+ count := 0
 
-func Balance() int {
- mu.Lock()
- defer mu.Unlock()
- return balance
+ for r := 0; r < 10; r++ {
+  go func() {
+//    mutex.Lock()
+//    defer mutex.Unlock()
+   count += 1
+   fmt.Println(count)
+  }()
+ }
+ time.Sleep(time.Second)
 }
+// 8
+// 7
+// 9
+// 1
+// 3
+// 4
+// 5
+// 6
+// 10
+// 2
 
+// 加锁后值依次递增输出
 ```
 
 ### 1.2.2. goroutine 安全读写共享变量
@@ -57,13 +66,21 @@ func teller() {
 func init() {
  go teller() // start the monitor goroutine
 }
+
+func main() {
+ Deposit(10)
+ fmt.Println(Balance()) // prints 10
+ Deposit(20)
+ fmt.Println(Balance()) // prints 30
+}
+// 通过 select 语句来实现的避免多个 goroutine 同时访问共享变量 balance
 ```
 
 ## 1.3. golang中常用的并发模型
 
-### 1.3.1. 通过channel通知实现并发控制
+### 1.3.1. 通过channel 同步通道实现并发控制
 
-无缓冲通道(同步通道)指的是通道的大小为0,这种类型的通道在接收前没有能力保存任何值,它要求发送 goroutine 和接收 goroutine 同时准备好,才可以完成发送和接收操作.如果没有同时准备好的话,先执行的操作就会阻塞等待,直到另一个相对应的操作准备好为止.这种无缓冲的通道我们也称之为同步通道.
+无缓冲通道(同步通道)指的是通道的大小为0,这种类型的通道在接收前没有能力保存任何值,它要求发送 goroutine 和接收 goroutine 同时准备好,才可以完成发送和接收操作.如果没有同时准备好的话,先执行的操作就会阻塞等待,直到另一个相对应的操作准备好为止.
 
 ```go
 func main() {
@@ -76,12 +93,14 @@ func main() {
     <-ch
     fmt.Println("finished")
 }
+// start working
+// finished
 // 当主 goroutine 运行到 <-ch 接受 channel 的值的时候,如果该 channel 中没有数据,就会一直阻塞等待,直到有值. 这样就可以简单实现并发控制
 ```
 
 ### 1.3.2. 通过sync包中的WaitGroup实现并发控制
 
-goroutine是异步执行的,为了防止在结束main函数的时候结束掉goroutine,所以需要同步等待,这个时候就需要用 WaitGroup了,在 sync 包中,提供了 WaitGroup,它会等待它收集的所有 goroutine 任务全部完成.
+goroutine是异步执行的,为了防止在结束main函数的时候结束掉goroutine,所以需要同步等待,WaitGroup 主要用于同步多个协程间的状态，例如等待所有协程都执行完
 
 #### 1.3.2.1. 在WaitGroup里主要有三个方法
 
@@ -90,17 +109,16 @@ Done, 相当于Add(-1).
 Wait, 执行后会堵塞主线程,直到WaitGroup 里的值减至0.
 
 ```go
-func main(){
+func main() {
  wg := sync.WaitGroup{}
-    for i := 0; i < 5; i++ {
-        wg.Add(1)
-        go func(wg sync.WaitGroup, i int) {
-            fmt.Printf("i:%d", i)
-            wg.Done()
-        }(wg, i)
-    }
-    wg.Wait()
-    fmt.Println("exit")
+ wg.Add(10)
+ for i := 0; i < 10; i++ {
+  go func(i int) {
+   fmt.Println(i)
+   wg.Done()
+  }(i)
+ }
+ wg.Wait()
 }
 ```
 
@@ -377,19 +395,21 @@ fmt.Println(runtime.NumGoroutine())
 可以使用 channel+WaitGroup 限制goroutine的数量
 
 ```go
-var wg = sync.WaitGroup{}
-ch := make(chan bool, 4)
-
-for i := 0; i < 10; i++ {
-    wg.Add(1)
-    ch <- true
-    go func(j int) {
-        fmt.Printf("j %d \n", j)
-        <-ch
-        wg.Done()
-    }(i)
+func main() {
+ var wg = sync.WaitGroup{}
+ ch := make(chan bool,1)
+ for i := 0; i < 10; i++ {
+  wg.Add(1)
+  ch <- true
+  go func(j int) {
+   fmt.Printf("j %d \n", j)
+   <-ch
+   wg.Done()
+  }(i)
+ }
+ wg.Wait()
 }
-wg.Wait()
+
 ```
 
 ## 1.10. 通道(channel)
@@ -417,6 +437,8 @@ func main() {
  ch <- 1
  fmt.Println("发送：", 1)
 }
+// 收到： 1
+// 发送： 1
 
 // 有缓冲通道
 func main() {
@@ -432,11 +454,13 @@ func main() {
  }()
 }
 
+// 发送： 1
+
 ```
 
-### 1.10.2. 通道的关闭
+### 1.10.2. 通道的关闭, close()
 
-close函数关闭channel, 关闭channel后, 无法向channel再发送数据,可以继续从channel接收数据, 对于nil channel,无论收发都会被阻塞.
+close函数关闭channel, 关闭后, 无法向channel再发送数据,可以继续从channel接收数据, 对于nil channel,无论收发都会被阻塞.
 
 ```go
 func main() {
@@ -445,7 +469,7 @@ func main() {
  close(chan1)
  for {
   _, ok := <-chan1
-//   如果 ok 的值为 false,则表示 ch 已经被关闭.
+//  ok值表示是否读取成功, 如果 ok 的值为 false,则表示未读取到值, 通道已关闭.
   fmt.Println(ok)
   if !ok {
    fmt.Println("channel closed!")
@@ -453,6 +477,9 @@ func main() {
   }
  }
 }
+// true
+// false
+// channel closed!
 ```
 
 ### 1.10.3. 超时处理
@@ -482,8 +509,8 @@ channel 发送和接收数据都是原子性的. channel内部维护了一个互
 
 ## 1.12. 对已经关闭的的 chan 进行读写,会怎么样?为什么?
 
-1. 读已经关闭的 chan, 如果 chan 关闭前,buffer 内有未读数据, 会读取 chan 内的值,且返回的第二个 bool 值(是否读成功)为 true.
-1. 读已经关闭的 chan, 如果 chan 关闭前,buffer 内无未读数据, 所有接收的值都会非阻塞直接成功,返回 channel 元素的零值,但是第二个 bool 值一直为 false.
+1. 读已经关闭的 chan, 如果 chan 关闭前,buffer 内有未读数据, 会读取 chan 内的值,且返回的第二个 bool 值为 true.
+1. 读已经关闭的 chan, 如果 chan 关闭前,buffer 内没有未读数据, 所有接收的值都会非阻塞直接成功,返回 channel 元素的零值,但是第二个 bool 值一直为 false.
 
     ```go
     func main() {
@@ -586,7 +613,7 @@ golang 中的有两种锁, 为互斥锁 sync.Mutex 和读写锁 sync.RWMutex. �
 
 ### 1.16.2. 互斥锁
 
-互斥锁是传统的并发程序对共享资源进行访问控制的方法, 使用互斥锁是为了来保护一个资源不会因为并发操作而引起冲突导致数据异常. 加上 Mutex 互斥锁,要求同一时刻,仅能有一个协程对数据操作.
+互斥锁是为了来保护一个资源不会因为并发操作而引起冲突导致数据异常. 加上 Mutex 互斥锁,要求同一时刻,仅能有一个协程对数据操作.
 
 ```go
 // 没有互斥锁之前, 三个协程在执行时,先读取 count 再更新 count 的值,而这个过程并不具备原子性,
@@ -624,7 +651,7 @@ func main() {
 
 #### 1.16.2.1. 注意事项
 
-1. 同一协程里,不要在尚未解锁时再次使加锁
+1. 同一协程里,不要在尚未解锁时再次加锁
 1. 同一协程里,不要对已解锁的锁再次解锁
 1. 加了锁后,别忘了解锁,必要时使用 defer 语句
 
@@ -638,7 +665,7 @@ func main() {
 #### 1.16.3.1. 基本原则: 读写互斥
 
 1. 写锁定情况下，对读写锁进行读锁定或者写锁定，都将阻塞；
-1. 读锁定情况下，对读写锁进行写锁定，将阻塞；加读锁时不会阻塞, 支持多个并发读操作
+1. 读锁定情况下，对读写锁进行写锁定，将阻塞；进行读锁定时不会阻塞, 支持多个并发读操作
 
 ```go
 package main
@@ -739,17 +766,17 @@ range能够感知channel的关闭,当channel被发送数据的协程关闭时,ra
 
 ```go
 func main() {
-	inCh := make(chan int, 1)
-	inCh <- 1
-	close(inCh)
-	go func(in <-chan int) {
-		// Using for-range to exit goroutine
-		// range has the ability to detect the close/end of a channel
-		for x := range in {
-			fmt.Printf("Process %d\n", x)
-		}
-	}(inCh)
-	time.Sleep(1e9)
+ inCh := make(chan int, 1)
+ inCh <- 1
+ close(inCh)
+ go func(in <-chan int) {
+  // Using for-range to exit goroutine
+  // range has the ability to detect the close/end of a channel
+  for x := range in {
+   fmt.Printf("Process %d\n", x)
+  }
+ }(inCh)
+ time.Sleep(1e9)
 }
 ```
 
@@ -760,21 +787,27 @@ func main() {
 #### 1.20.2.1. 某个通道关闭后, 无需处理其他case, return退出协程
 
 ```go
-go func() {
-    // in for-select using ok to exit goroutine
-    for {
-        select {
-            case x, ok := <-in:
-                if !ok {
-                    return
-                }
-                fmt.Printf("Process %d\n", x)
-                processedCnt++
-            case <-t.C:
-                fmt.Printf("Working, processedCnt = %d\n", processedCnt)
-        }
+func main() {
+ in := make(chan int)
+ close(in)
+ out := make(chan int)
+ go func() {
+  // in for-select using ok to exit goroutine
+  for {
+   select {
+   case x, ok := <-in:
+    if !ok {
+     fmt.Printf("Process exit %d\n", x)
+     return
     }
-}()
+   case <-out:
+    fmt.Printf("Working \n")
+   }
+  }
+ }()
+ time.Sleep(time.Second)
+}
+
 ```
 
 #### 1.20.2.2. 某个通道关闭后, 需要等待处理其他case, 已关闭的通道设置为nil
@@ -782,59 +815,83 @@ go func() {
 select的特性: 不会在nil的通道上进行等待. 可以把只读通道设置为nil
 
 ```go
-go func() {
- // in for-select using ok to exit goroutine
- for {
-  select {
-  case x, ok := <-in1:
-   if !ok {
-    in1 = nil
-   }
-   // Process
-  case y, ok := <-in2:
-   if !ok {
-    in2 = nil
-   }
-   // Process
-  case <-t.C:
-   fmt.Printf("Working, processedCnt = %d\n", processedCnt)
-  }
+func main() {
+ in := make(chan int)
+ close(in)
+ out := make(chan int, 1)
+ out <- 1
 
-  // If both in channel are closed, goroutine exit
-  if in1 == nil && in2 == nil {
-   return
+ go func() {
+  // in for-select using ok to exit goroutine
+  for {
+   select {
+   case _, ok := <-in:
+    if !ok {
+     fmt.Println("in channel closed")
+     in = nil
+    }
+   case <-out:
+    fmt.Println("Working")
+   }
+
+   // If both in channel are closed, goroutine exit
+   if in == nil {
+    fmt.Println("in channel closed return")
+    return
+   }
   }
- }
-}()
+ }()
+ time.Sleep(time.Second)
+}
+
+// Working
+// in channel closed
+// in channel closed return
+
 ```
 
 ### 1.20.3. 使用退出通道退出
 
 ```go
 func worker(stopCh <-chan struct{}) {
-    go func() {
-        defer fmt.Println("worker exit")
-        // Using stop channel explicit exit
-        for {
-            select {
-            case <-stopCh:
-                fmt.Println("Recv stop signal")
-                return
-            case <-t.C:
-                fmt.Println("Working .")
-            }
-        }
-    }()
+ go func() {
+  defer fmt.Println("worker exit")
+  t := time.NewTicker(time.Millisecond * 500)
+  // Using stop channel explicit exit
+  for {
+   select {
+   case <-stopCh:
+    fmt.Println("Recv stop signal")
     return
+   case <-t.C:
+    fmt.Println("Working .")
+   }
+  }
+ }()
+ return
 }
 
+func main() {
+ stopCh := make(chan struct{})
+ go worker(stopCh)
+
+ time.Sleep(time.Second * 2)
+ close(stopCh)
+
+ // Wait some print
+ time.Sleep(time.Second)
+ fmt.Println("main exit")
+}
+
+// 显式关闭通道 stopCh 可以处理主动通知协程退出的场景。只要 main() 执行关闭 stopCh，每一个 worker 都会都到信号，进而关闭
 ```
 
 ### 1.20.4. 总结
 
 1. 发送协程主动关闭通道,接收协程不关闭通道.技巧:把接收方的通道入参声明为只读,如果接收协程关闭只读协程,编译时就会报错.
 1. 协程处理1个通道,并且是读时,协程优先使用for-range,因为range可以关闭通道,自动退出协程.
-1. ,ok可以处理多个读通道关闭,需要关闭当前使用for-select的协程.
+1. _,ok可以处理多个读通道关闭,需要关闭当前使用for-select的协程.
+1. 显式关闭通道 stopCh 可以处理主动通知协程退出的场景。
 
 ## 1.21. 如何让所有子协程执行完后再执行主协程
 
@@ -865,14 +922,14 @@ var tongBu = make(chan int)
 
 func person1() {
     printString("Gerald")
-	fmt.Println("person1")
+ fmt.Println("person1")
     tongBu < -1
     ch < -1
 }
 
 func person2() { 
     < -tongBu
-	fmt.Println("person2")
+ fmt.Println("person2")
     ch < -2
 }
 
@@ -921,24 +978,24 @@ var wg sync.WaitGroup
 var tongBu = make(chan int)
 
 func person1() {
-	fmt.Println("person1")
-	tongBu <- 1
-	wg.Done()
+ fmt.Println("person1")
+ tongBu <- 1
+ wg.Done()
 }
 
 func person2() {
-	<-tongBu
-	fmt.Println("person2")
-	wg.Done()
+ <-tongBu
+ fmt.Println("person2")
+ wg.Done()
 }
 
 func main() {
-	wg.Add(2)
-	// 目的:使用 channel 来实现 person1 先于 person2 执行
-	go person2()
-	go person1()
-	defer close(tongBu)
-	wg.Wait()
+ wg.Add(2)
+ // 目的:使用 channel 来实现 person1 先于 person2 执行
+ go person2()
+ go person1()
+ defer close(tongBu)
+ wg.Wait()
 }
 
 
