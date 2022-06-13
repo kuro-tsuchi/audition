@@ -80,6 +80,10 @@ module.exports = {
         link: '/database/',
         children: [
           {
+            text: 'distributed',
+            link: '/database/distributed',
+          },
+          {
             text: 'mysql',
             link: '/database/mysql',
           },
@@ -150,12 +154,8 @@ module.exports = {
             link: '/golang/concurrency',
           },
           {
-            text: 'grpc',
-            link: '/golang/grpc',
-          },
-          {
-            text: 'encryption',
-            link: '/golang/encryption',
+            text: 'distributed',
+            link: '/golang/distributed',
           },
         ],
       },
@@ -204,7 +204,7 @@ module.exports = {
       '/database/': [
         {
           text: 'database',
-          children: ['mysql', 'redis',        'elasticsearch',],
+          children: ['distributed','mysql', 'redis',        'elasticsearch',],
         },
       ],
       '/mq/': [
@@ -233,7 +233,7 @@ module.exports = {
       '/golang/': [
         {
           text: 'golang',
-          children: ['codingstandard','basic', 'concurrency', 'grpc', 'encryption'],
+          children: ['codingstandard','basic', 'concurrency', 'distributed'],
         },
       ],
       '/business/': [

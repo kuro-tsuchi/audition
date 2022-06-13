@@ -2,38 +2,20 @@ package main
 
 import (
 	"fmt"
-	"time"
+
+	"github.com/bwmarrin/snowflake"
 )
 
-func worker(stopCh <-chan struct{}) {
-	go func() {
-		defer fmt.Println("worker exit")
-
-		t := time.NewTicker(time.Millisecond * 500)
-
-		// Using stop channel explicit exit
-		for {
-			select {
-			case <-stopCh:
-				fmt.Println("Recv stop signal")
-				return
-			case <-t.C:
-				fmt.Println("Working .")
-			}
-		}
-	}()
-	return
-}
-
 func main() {
+	// Create a new Node with a Node number of 1
+	node, err := snowflake.NewNode(1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-	stopCh := make(chan struct{})
-	go worker(stopCh)
-
-	time.Sleep(time.Second * 2)
-	close(stopCh)
-
-	// Wait some print
-	time.Sleep(time.Second)
-	fmt.Println("main exit")
+	// Generate a snowflake ID.
+	id := node.Generate()
+	fmt.Printf("Int64  ID: %d\n", id)
+	fmt.Printf("String ID: %s\n", id)
 }

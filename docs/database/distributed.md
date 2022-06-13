@@ -82,13 +82,12 @@ public Long getSeq(String key,String hashKey,Long delta) throws BusinessExceptio
 
 ![20220404145626](https://raw.githubusercontent.com/kuro-tsuchi/my-picgo/master/md/img/20220404145626.png)
 
-SnowFlake 算法生成 id 的结果是一个 64bit 大小的 long 类型整数,雪花算法使用数据中心 ID 和机器 ID 作为标识,不会产生 ID 的重复,并且是在本地生成,不会消耗网络,效率高,有数据显示,每秒能生成 26 万个 ID.
+SnowFlake 算法生成 id 的结果是一个 64bit 大小的 long 类型整数,雪花算法使用 工作机器ID作为标识,不会产生 ID 的重复,并且是在本地生成,不会消耗网络,效率高,有数据显示,每秒能生成 26 万个 ID.
 
-1. 符号位: 1 位,不用.二进制中最高位为 1 的都是负数,但是我们生成的 id 一般都使用
-   整数,所以这个最高位固定是 0
+1. 符号位: 1 位,不用.二进制中最高位为 1 的都是负数,但是我们生成的 id 一般都使用整数,所以这个最高位固定是 0
 1. 时间戳(毫秒): 41 位, 支持 69 年的时间跨度
-1. 机器 id: 10 位,包括 5 位的数据中心标识 ID 和 5 位的机器标识 ID
-1. 序列号: 12 位, 表示同一机器同一时间(毫秒)内产生的 4095 个 ID 序号.
+1. 工作机器 id: 10 位,包括 5 位的数据中心ID 和 5位的 workerId
+1. 序列号: 12 位, 表示同一机器同一时间(毫秒)内产生的 4096 个 ID序列号.
 
 #### 1.1.7.1. 时间回拨产生重复 ID 的情况
 
@@ -100,7 +99,7 @@ SnowFlake 算法生成 id 的结果是一个 64bit 大小的 long 类型整数,�
 #### 1.1.7.2. SnowFlake 特点
 
 1. 所有生成的 id 按时间趋势递增
-1. 整个分布式系统内不会产生重复id(因为有 datacenterId 和 workerId 来做区分)
+1. 整个分布式系统内不会产生重复id
 
 ## 1.2. 分布式锁在项目中有哪些应用场景?
 
@@ -108,7 +107,7 @@ SnowFlake 算法生成 id 的结果是一个 64bit 大小的 long 类型整数,�
 
 Java 语言给我们提供了线程锁,Synchronized,Lock 等.当一个锁被某个线程持有的时候,另一个线程尝试去获取这个锁会失败或者阻塞,直到持有锁的线程释放了该锁.
 
-在单台服务器内部,可以通过线程加锁的方式来同步,避免并发问题,那么在分布式场景下需要用的分布式锁
+单台服务器可以通过线程加锁的方式来同步,避免并发问题, 而分布式场景下需要使用到分布式锁
 
 分布式锁的目的是保证在分布式部署的应用集群中,多个服务在请求同一个方法或者同一个业务操作的情况下,对应业务逻辑只能被一台机器上的一个线程执行,避免出现并发问题.
 
@@ -122,8 +121,8 @@ Java 语言给我们提供了线程锁,Synchronized,Lock 等.当一个锁被某�
 
 1. 互斥性。在任意时刻，只有一个客户端能持有锁。
 1. 防死锁。即使有一个客户端在持有锁的期间崩溃而没有主动解锁，也能保证后续其他客户端能加锁。
-1. 具有容错性。只要大部分的Redis节点正常运行，客户端就可以加锁和解锁。
-1. 解铃还须系铃人。加锁和解锁必须是同一个客户端，客户端自己不能把别人加的锁给解了。
+1. 容错性。只要大部分的Redis节点正常运行，客户端就可以加锁和解锁。
+1. 加锁和解锁必须是同一个客户端，客户端自己不能把别人加的锁给解了。
 
 ## 1.3. 分布锁有哪些解决方案
 
@@ -160,27 +159,163 @@ public String TestLock() {
 1. MySQL: 基于关系型数据库实现分布式锁,是依赖数据库的唯一性来实现资源锁定,比如主
    键和唯一索引等.
 
-## 1.4. Redis 做分布式锁用什么命令
+1. etcd 使用 Raft 算法保持了数据的强一致性，某次操作存储到集群中的值必然是全局一致的，所以很容易实现分布式锁。
 
-格式:setnx key value 将 key 的值设为 value,当旦仅当 key 不存在. 若给定的 key 已
-经存在,则 SETNX 不做任何动作,操作失败.
+## 1.4. etcd 做分布式锁
+
+### 原理
+
+1. 客户端连接 Etcd，以 /lock/mylock 为前缀创建全局唯一的 key,客户端分别为自己的 key 创建租约 - Lease，租约的长度根据业务耗时确定，假设为 15s
+1. 创建定时任务作为租约的心跳,当一个客户端持有锁期间，其它客户端只能等待，为了避免等待期间租约失效，客户端需创建一个定时任务作为 “心跳” 进行续约。此外，如果持有锁期间客户端崩溃，心跳停止，key 将因租约到期而被删除，从而锁释放，避免死锁。
+1. 客户端将自己全局唯一的 key 写入 Etcd
+1. 客户端判断是否获得锁
+1. 客户端以前缀 /lock/mylock 读取 keyValue 列表（keyValue 中带有 key 对应的 Revision），判断自己 key 的 Revision 是否为当前列表中最小的，如果是则认为获得锁
+1. 获得锁后，操作共享资源，执行业务代码。
+1. 完成业务流程后，删除对应的 key 释放锁
+
+在 etcd 的 clientv3 包中，实现了分布式锁。因此在使用 etcd 提供的分布式锁式非常简单，通常就是实例化一个 mutex，然后尝试抢占锁，之后进行业务处理，最后解锁即可。
+
+```go
+package main
+
+import (  
+    "context"
+    "fmt"
+    "github.com/coreos/etcd/clientv3"
+    "github.com/coreos/etcd/clientv3/concurrency"
+    "log"
+    "os"
+    "os/signal"
+    "time"
+)
+
+func main() {  
+    c := make(chan os.Signal)
+    signal.Notify(c)
+   // 客户端连接 Etcd，
+    cli, err := clientv3.New(clientv3.Config{
+        Endpoints:   []string{"localhost:2379"},
+        DialTimeout: 5 * time.Second,
+    })
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer cli.Close()
+   // 以 /lock/mylock 为前缀创建全局唯一的 key
+    lockKey := "/lock"
+
+    go func () {
+        session, err := concurrency.NewSession(cli)
+        if err != nil {
+            log.Fatal(err)
+        }
+        m := concurrency.NewMutex(session, lockKey)
+        if err := m.Lock(context.TODO()); err != nil {
+            log.Fatal("go1 get mutex failed " + err.Error())
+        }
+        fmt.Printf("go1 get mutex sucess\n")
+        fmt.Println(m)
+        time.Sleep(time.Duration(10) * time.Second)
+        m.Unlock(context.TODO())
+        fmt.Printf("go1 release lock\n")
+    }()
+
+    go func() {
+        time.Sleep(time.Duration(2) * time.Second)
+        session, err := concurrency.NewSession(cli)
+        if err != nil {
+            log.Fatal(err)
+        }
+        m := concurrency.NewMutex(session, lockKey)
+        if err := m.Lock(context.TODO()); err != nil {
+            log.Fatal("go2 get mutex failed " + err.Error())
+        }
+        fmt.Printf("go2 get mutex sucess\n")
+        fmt.Println(m)
+        time.Sleep(time.Duration(2) * time.Second)
+        m.Unlock(context.TODO())
+        fmt.Printf("go2 release lock\n")
+    }()
+
+    <-c
+}
+```
+
+## 1.5. Redis 做分布式锁用什么命令
 
 1. 加锁:set key value nx ex 10s
 1. 释放锁: delete key
+若给定的 key 已经存在,则 SETNX 不做任何动作,操作失败.
 
 ```java
 @Autowired
 private RedisTemplate redis;
-
 Boolean nx = redis.opsForValue().setIfAbsent("key", "value", 20, TimeUnit.MINUTES)
 ```
 
-## 1.5. Redis 做分布式锁死锁有哪些情况, 如何解决
+```go
+import (
+  "fmt"
+  "time"
+
+  "github.com/bsm/redislock"
+  "github.com/go-redis/redis/v8"
+)
+func main() {
+ // Connect to redis.
+ client := redis.NewClient(&redis.Options{
+  Network: "tcp",
+  Addr:  "127.0.0.1:6379",
+ })
+ defer client.Close()
+
+ // Create a new lock client.
+ locker := redislock.New(client)
+
+ ctx := context.Background()
+
+ // Try to obtain lock.
+ lock, err := locker.Obtain(ctx, "my-key", 100*time.Millisecond, nil)
+ if err == redislock.ErrNotObtained {
+  fmt.Println("Could not obtain lock!")
+ } else if err != nil {
+  log.Fatalln(err)
+ }
+
+ // Don't forget to defer Release.
+ defer lock.Release(ctx)
+ fmt.Println("I have a lock!")
+
+ // Sleep and check the remaining TTL.
+ time.Sleep(50 * time.Millisecond)
+ if ttl, err := lock.TTL(ctx); err != nil {
+  log.Fatalln(err)
+ } else if ttl > 0 {
+  fmt.Println("Yay, I still have my lock!")
+ }
+
+ // Extend my lock.
+ if err := lock.Refresh(ctx, 100*time.Millisecond, nil); err != nil {
+  log.Fatalln(err)
+ }
+
+ // Sleep a little longer, then check.
+ time.Sleep(100 * time.Millisecond)
+ if ttl, err := lock.TTL(ctx); err != nil {
+  log.Fatalln(err)
+ } else if ttl == 0 {
+  fmt.Println("Now, my lock has expired!")
+ }
+
+}
+```
+
+## 1.6. Redis 做分布式锁死锁有哪些情况, 如何解决
 
 1. 加锁,没有释放锁.需要加释放锁的操作.比如 delete key.
 1. 加锁后,程序还没有执行释放锁,程序挂了.需要用到 key 的过期机制.
 
-## 1.6. Redis 如何做分布式锁?
+## 1.7. Redis 如何做分布式锁?
 
 1. 服务 A 为了获得锁,向 Redis 发起如下命令: SET productld:lock 0xx9p03001 NX EX
    30000 其中, "productld"由自己定义,可以是与本次业务有关的 id,"0xx9p03001"是一
@@ -199,7 +334,7 @@ Boolean nx = redis.opsForValue().setIfAbsent("key", "value", 20, TimeUnit.MINUTE
    比如当前场景下,Redis 中的锁早就不是服务 A 持有的那一把了,而是由服务 B 创建,如
    果贸然使用服务 A 持有的 key 来删除锁,则会误将服务 B 的锁释放掉.
 
-## 1.7. Redission 如何做分布式锁?
+## 1.8. Redission 如何做分布式锁?
 
 redisson 是 Redis 官方的分布式锁组件. Redisson 是一个在 Redis 的基础上实现的Java 驻内存数据网格.它不仅提供了一系列的分布式的 Java 常用对象,还实现了可重入锁(Reentrant Lock),公平锁(Fair Lock,联锁(MultiLock), 红锁(RedLock), 读写锁(ReadWriteLock)等,还提供了许多分布式服务.
 
@@ -207,7 +342,7 @@ redisson 是 Redis 官方的分布式锁组件. Redisson 是一个在 Redis 的�
 RLock lock = redisson.getLock("myLock");
 ```
 
-## 1.8. 可重入锁（Reentrant Lock）
+## 1.9. 可重入锁（Reentrant Lock）
 
 Redisson的分布式可重入锁RLock Java对象实现了java.util.concurrent.locks.Lock接口，同时还支持自动过期解锁。
 
@@ -232,7 +367,7 @@ public void testReentrantLock(RedissonClient redisson){
 }
 ```
 
-## 1.9. 红锁（RedLock）
+## 1.10. 红锁（RedLock）
 
 假设有5个redis节点，这些节点之间既没有主从，也没有集群关系。客户端用相同的key和随机值在5个节点上请求锁，请求锁的超时时间应小于锁自动释放时间。当在3个（超过半数）redis上请求到锁的时候，才算是真正获取到了锁。如果没有获取到锁，则把部分已锁的redis释放掉。
 
@@ -257,13 +392,13 @@ public void testRedLock(RedissonClient redisson1,RedissonClient redisson2, Redis
 }
 ```
 
-## 1.10. 基于 ZooKeeper 的分布式锁实现原理是什么?
+## 1.11. 基于 ZooKeeper 的分布式锁实现原理是什么?
 
-### 1.10.1. 顺序节点特性
+### 1.11.1. 顺序节点特性
 
 使用 ZooKeeper 的顺序节点特性,假如我们在/lock/目录下创建 3 个节点,ZK 集群会按照发起创建的顺序来创建节点,节点分别为/lock/0000000001,/lock/0000000002,/lock/0000000003,最后一位数是依次递增的,节点名由 zk 来完成.
 
-### 1.10.2. 临时节点特性
+### 1.11.2. 临时节点特性
 
 ZK 中还有一种名为临时节点的节点,临时节点由某个客户端创建,当客户端与 ZK 集群断开
 连接,则该节点自动被删除.EPHEMERAL_SEQUENTIAL 为临时顺序节点.
@@ -280,14 +415,14 @@ ZK 中还有一种名为临时节点的节点,临时节点由某个客户端创�
    大的节点,进入等待.直到下次监视的子节点变更的时候,再进行子节点的获取,判断是否
    获取锁.
 
-## 1.11. ZooKeeper 和 Reids 做分布式锁的区别?
+## 1.12. ZooKeeper 和 Reids 做分布式锁的区别?
 
-### 1.11.1. Reids
+### 1.12.1. Reids
 
 1. Redis 只保证最终一致性,副本间的数据复制是异步进行(Set 是写,Get 是读,Reids 集群一般是读写分离架构,存在主从同步延迟情况),主从切换之后可能有部分数据没有复制过去可能会丢失锁情况,故强一致性要求的业务不推荐使用 Reids,推荐使用 zk.
 2. Redis 集群各方法的响应时间均为最低.随着并发量和业务数量的提升其响应时间会有明显上升(公网集群影响因素偏大),但是极限 qps 可以达到最大且基本无异常
 
-### 1.11.2. ZooKeeper
+### 1.12.2. ZooKeeper
 
 1. 使用 ZooKeeper 集群,锁原理是使用 ZooKeeper 的临时顺序节点,临时顺序节点的生命
    周期在 Client 与集群的 Session 结束时结束.因此如果某个 Client 节点存在网络问
@@ -296,12 +431,12 @@ ZK 中还有一种名为临时节点的节点,临时节点由某个客户端创�
 2. ZK 具有较好的稳定性; 响应时间抖动很小,没有出现异常.但是随着并发量和业务数量的
    提升其响应时间和 qps 会明显下降.
 
-### 1.11.3. 总结
+### 1.12.3. 总结
 
 1. Zookeeper 每次进行锁操作前都要创建若干节点,完成后要释放节点,会浪费很多时间;
 1. Redis 只是简单的数据操作,没有这个问题.
 
-## 1.12. MySQL 如何做分布式锁?
+## 1.13. MySQL 如何做分布式锁?
 
 通过主键 id 或者唯一索引(unique key)进行加锁,加锁的形式是向一张表中插入一条数据,该条数据的 id 就是一把分布式锁,例如当一次请求插入了一条
 id 为 1 的数据,其他想要进行插入数据的并发请求必须等第一次请求执行完成后删除这 id 为 1 的数据才能继续插入,实现了分布式锁的功能.
@@ -320,15 +455,15 @@ def unlock:
     exec sql: delete from lockedOrder where order_id='order_id'
 ```
 
-## 1.13. 为什么需要限流?
+## 1.14. 为什么需要限流?
 
 由于互联网公司的流量巨大,系统上线会做一个流量峰值的评估,尤其是像各种秒杀促销活动,为了保证系统不被巨大的流量压垮,会在系统流量到达一定阈值时,拒绝掉一部分流量.
 
-## 1.14. 限流算法有哪些
+## 1.15. 限流算法有哪些
 
 计数器,滑动时间窗口,漏桶算法,令牌桶算法
 
-### 1.14.1. 计数器算法是什么?
+### 1.15.1. 计数器算法是什么?
 
 计数器算法,是指在指定的时间周期内累加访问次数,达到设定的阈值时,触发限流策略.下一
 个时间周期进行访问时,访问次数清零.此算法无论在单机还是分布式环境下实现都非常简单
@@ -344,7 +479,7 @@ def unlock:
 虽然在每个周期内,都没超过阈值,但是在这 20 秒内,已经远远超过了我们原来设置的 1 分
 钟 100 个请求的阈值.
 
-### 1.14.2. 滑动时间窗口算法是什么?
+### 1.15.2. 滑动时间窗口算法是什么?
 
 为了解决计数器算法的临界值的问题,发明了滑动窗口算法.在 TCP 网络通信协议中,就采用
 滑动时间窗口算法来解决网络拥堵问题.
@@ -364,7 +499,7 @@ def unlock:
 在滑动时间窗口算法中,我们的小窗口划分的越多,滑动窗口的滚动就越平滑,限流的统计就
 会越精确
 
-### 1.14.3. 漏桶限流算法是什么?
+### 1.15.3. 漏桶限流算法是什么?
 
 漏桶算法的原理就像它的名字一样,我们维持一个漏斗,它有恒定的流出速度,不管水流流入
 的速度有多快,漏斗出水的速度始终保持不变,类似于消息中间件,不管消息的生产者请求量
@@ -373,18 +508,18 @@ def unlock:
 漏桶的容量=漏桶的流出速度\*可接受的等待时长.在这个容量范围内的请求可以排队等待系
 统的处理,超过这个容量的请求,才会被抛弃.
 
-#### 1.14.3.1. 在漏桶限流算法中,存在下面几种情况
+#### 1.15.3.1. 在漏桶限流算法中,存在下面几种情况
 
 1. 当请求速度大于漏桶的流出速度时,也就是请求量大于当前服务所能处理的最大极限值时
    ,触发限流策略.
 1. 请求速度小于或等于漏桶的流出速度时,也就是服务的处理能力大于或等于请求量时,正
    常执行.
 
-#### 1.14.3.2. 缺点
+#### 1.15.3.2. 缺点
 
 当系统在短时间内有突发的大流量时,漏桶算法处理不了
 
-### 1.14.4. 令牌桶限流算法是什么?
+### 1.15.4. 令牌桶限流算法是什么?
 
 令牌桶算法,是增加一个大小固定的容器,也就是令牌桶,系统以恒定的速率向令牌桶中放入
 令牌,如果有客户端来请求,先需要从令牌桶中拿一个令牌,拿到令牌,才有资格访问系统,这
@@ -399,7 +534,7 @@ def unlock:
    以被正常处理.令牌桶算法,由于有一个桶的存在,可以处理短时间大流量的场景.这是令
    牌桶和漏桶的一个区别.
 
-## 1.15. 设计微服务时遵循什么原则
+## 1.16. 设计微服务时遵循什么原则
 
 1. 单一职责原则:让每个服务能独立,有界限的工作,每个服务只关注自己的业务.做到高内聚.
 2. 服务自治原则:每个服务要能做到独立开发,测试,构建,部署,运行. 与其他服务进行解耦.
@@ -408,11 +543,11 @@ def unlock:
 
 总结一句话,软件是为业务服务的,好的系统不是设计出来的,而是进化出来的.
 
-## 1.16. CAP 定理
+## 1.17. CAP 定理
 
 一个分布式系统最多只能同时满足一致性(Consistency), 可用性(Availability)和分区容错性(Partition tolerance)这三项中的两项.
 
-### 1.16.1. 概念解释
+### 1.17.1. 概念解释
 
 1. C一致性:数据在多个副本节点中保持一致,可以理解成两个用户访问两个系统 A 和 B,当 A 系统数据有变化时,及时同步给 B 系统,让两个用户看到的数据是一致的.
 1. A可用性: 系统对外提供服务必须一直处于可用状态,在任何故障下,客户端都能在合理时间内获得服务端非错误的响应.
@@ -420,7 +555,7 @@ def unlock:
 
 总的来说,数据存在的节点越多,分区容错性越高,但要复制更新的数据就越多,一致性就越难保证.为了保证一致性, 更新所有节点数据所需要的时间就越长,可用性就会降低.
 
-### 1.16.2. 原理解释
+### 1.17.2. 原理解释
 
 我们来详细分析一下 CAP,为什么只能满足两个.看下图所示:
 
@@ -441,21 +576,21 @@ def unlock:
    让系统 B 能继续提供服务,那么此时,只能接受系统 A 没有将 data2 同步给系统 B(牺
    牲了一致性).此时满足的就是 AP.
 
-## 1.17. 幂等有哪些技术解决方案?
+## 1.18. 幂等有哪些技术解决方案?
 
-### 1.17.1. 查询操作
+### 1.18.1. 查询操作
 
 查询一次和查询多次,在数据不变的情况下,查询结果是一样的.select 是天然的幂等操作;
 
-### 1.17.2. 删除操作
+### 1.18.2. 删除操作
 
 删除操作也是幂等的,删除一次和多次删除都是把数据删除.(注意可能返回结果不一样,删除的数据不存在,返回 0,删除的数据多条,返回结果多个.
 
-### 1.17.3. 唯一索引
+### 1.18.3. 唯一索引
 
 防止新增脏数据.比如:支付宝的资金账户,支付宝也有用户账户,每个用户只能有一个资金账户,怎么防止给用户创建多个资金账户,那么给资金账户表中的用户 ID 加唯一索引,所以一个用户新增成功一个资金账户记录.要点:唯一索引或唯一组合索引来防止新增数据存在脏数据(当表存在唯一索引,并发时新增报错时,再查询一次就可以了,数据应该已经存在了,返回结果即可.
 
-### 1.17.4. token 机制
+### 1.18.4. token 机制
 
 防止页面重复提交.
 
@@ -468,11 +603,11 @@ def unlock:
    - 提交后后台校验 token,同时删除 token,生成新的 token 返回.
 1. token 特点:要申请,一次有效性,可以限流.
 
-### 1.17.5. traceld
+### 1.18.5. traceld
 
 操作时唯一的.
 
-## 1.18. 对外提供的 API 如何保证幂等?
+## 1.19. 对外提供的 API 如何保证幂等?
 
 举例说明:银联提供的付款接口:需要接入商户提交付款请求时附带:source 来源,seq 序列
 号.source+seq 在数据库里面做唯一索引,防止多次付款(并发时,只能处理一个请求).
@@ -482,7 +617,7 @@ def unlock:
 在本方系统里面查询一下,是否已经处理过,返回相应处理结果;没有处理过,进行相应处理,
 返回结果.
 
-## 1.19. 认证(Authentication)和授权(Authorization)的区别是什么?
+## 1.20. 认证(Authentication)和授权(Authorization)的区别是什么?
 
 Authentication(认证)是验证您的身份的凭据(例如用户名/用户 ID 和密码),通过这个凭据
 ,系统得以知道你就是你,也就是说系统存在你这个用户.所以,Authentication 被称为身份/
@@ -494,14 +629,14 @@ Authorization(授权) 发生在 Authentication(认证)之后.授权,它主要掌
 
 这两个一般在我们的系统中被结合在一起使用,目的就是为了保护我们系统的安全性.
 
-## 1.20. Cookie 和 Session 有什么区别?如何使用 Session 进行身份验证?
+## 1.21. Cookie 和 Session 有什么区别?如何使用 Session 进行身份验证?
 
 Session 的主要作用就是通过服务端记录用户的状态. Cookie 数据保存在客户端(浏览器端
 ),Session 数据保存在服务器端.相对来说 Session 安全性更高.如果使用 Cookie 的话,一
 些敏感信息不要写入 Cookie 中,最好能将 Cookie 信息加密然后使用到的时候再去服务器
 端解密.
 
-### 1.20.1. 如何使用 Session 进行身份验证?
+### 1.21.1. 如何使用 Session 进行身份验证?
 
 很多时候我们都是通过 SessionID 来指定特定的用户,SessionID 一般会选择存放在服务端
 .举个例子:用户成功登陆系统,然后返回给客户端具有 SessionID 的 Cookie,当用户向后端
@@ -518,7 +653,7 @@ Session 的主要作用就是通过服务端记录用户的状态. Cookie 数据
    Session 信息进行比较,以验证用户的身份,返回给用户客户端响应信息的时候会附带用
    户当前的状态.
 
-## 1.21. 什么是 Token? 什么是 JWT? 如何基于 Token 进行身份验证?
+## 1.22. 什么是 Token? 什么是 JWT? 如何基于 Token 进行身份验证?
 
 我们知道 Session 信息需要保存一份在服务器端.这种方式会带来一些麻烦,比如需要我们
 保证保存 Session 信息服务器的可用性,不适合移动端(不依赖 Cookie)等. 有没有一种不
@@ -534,7 +669,7 @@ Token) 就是这种方式的实现,通过这种方式服务器端就不需要保
 1. 用户以后每次向后端发请求都在 Header 中带上 JWT.
 1. 服务端检查 JWT 并从中获取用户相关信息.
 
-## 1.22. 分布式架构下,Session 共享有什么方案?
+## 1.23. 分布式架构下,Session 共享有什么方案?
 
 1. 现在的系统会把 session 放到 Redis 中存储,虽然架构上变得复杂,并且需要多访问一
    次 Redis,但是这种方案带来的好处也是很大的:实现 session 共享,可以水平扩展(增加

@@ -80,7 +80,7 @@ func main() {
 
 ### 1.3.1. 通过channel 同步通道实现并发控制
 
-无缓冲通道(同步通道)指的是通道的大小为0,这种类型的通道在接收前没有能力保存任何值,它要求发送 goroutine 和接收 goroutine 同时准备好,才可以完成发送和接收操作.如果没有同时准备好的话,先执行的操作就会阻塞等待,直到另一个相对应的操作准备好为止.
+无缓冲通道(同步通道)指的是通道的大小为0,它要求发送 goroutine 和接收 goroutine 同时准备好,才可以完成发送和接收操作.如果没有同时准备好的话,先执行的操作就会阻塞等待,直到另一个相对应的操作准备好为止.
 
 ```go
 func main() {
@@ -346,7 +346,7 @@ CSP(通信顺序过程 Communicating Sequential Processes),是基于通道传递
 
 ### 1.8.2. go 语言对 CSP 并发模型的实现: GPM 调度模型
 
-GPM 代表了三个角色,分别是 goroutine,Processor,Machine.
+GPM 代表了三个角色,分别是 goroutine,Processor,Machine(在golang 中等同于系统线程.).
 ![picture 1](../.vuepress/public/assets/images/1647609486264.png)
 
 1. G (协程:goroutine): go 协程,每个 go 关键字都会创建一个协程. `go func() {}()`
@@ -888,7 +888,7 @@ func main() {
 
 ### 1.20.4. 总结
 
-1. 发送协程主动关闭通道,接收协程不关闭通道.技巧:把接收方的通道入参声明为只读,如果接收协程关闭只读协程,编译时就会报错.
+1. 发送协程主动关闭通道,接收协程不关闭通道.
 1. 协程处理1个通道,并且是读时,协程优先使用for-range,因为range可以关闭通道,自动退出协程.
 1. _,ok可以处理多个读通道关闭,需要关闭当前使用for-select的协程.
 1. 显式关闭通道 stopCh 可以处理主动通知协程退出的场景。
@@ -913,46 +913,30 @@ func main() {
 ```go
 package main
 
-import (
-    "fmt"
-)
-
-var ch = make(chan int)
-var tongBu = make(chan int)
-
-func person1() {
-    printString("Gerald")
- fmt.Println("person1")
-    tongBu < -1
-    ch < -1
-}
-
-func person2() { 
-    < -tongBu
- fmt.Println("person2")
-    ch < -2
-}
-
 func main() {
-    // 目的:使用 channel 来实现 person1 先于 person2 执行
-    go person1()
-    go person2()
-    count: = 2
-
-    // 判断所有协程是否退出
-    for range ch {
-        count--
-        if 0 == count {
-            close(ch)
-        }
-    }
+ ch := make(chan struct{})
+ count := 2 // count 表示活动的协程个数
+ go func() {
+  fmt.Println("Goroutine 1")
+  ch <- struct{}{} // 协程结束，发出信号
+ }()
+ go func() {
+  fmt.Println("Goroutine 2")
+  ch <- struct{}{} // 协程结束，发出信号
+ }()
+ for range ch {
+  // 每次从ch中接收数据，表明一个活动的协程结束
+  count--
+  // 当所有活动的协程都结束时，关闭管道
+  if count == 0 {
+   close(ch)
+  }
+ }
 }
 
 // count 表示有多少个协程
 // ch 用来子协程与主协程之间的同步
-// tongBu 用来两个协程之间的同步
 // 主协程阻塞等待数据,每当一个子协程执行完后,就会往 ch 里面写一个数据,主协程收到后会使 count–,
-
 // 当 count 减为 0,关闭 ch,主协程将不阻塞在 range ch.
 ```
 
@@ -967,37 +951,21 @@ sync.WaitGroup 内部是实现了一个计数器,它有三个方法
 ```go
 package main
 
-import (
-   "fmt"
-   "sync"
-)
-
 // 使用 sync.WaitGroup 的方式来实现主协程等待其他子协程
 
-var wg sync.WaitGroup
-var tongBu = make(chan int)
-
-func person1() {
- fmt.Println("person1")
- tongBu <- 1
- wg.Done()
+ func main() {
+  var wg sync.WaitGroup
+  wg.Add(2) // 因为有两个动作，所以增加2个计数
+  go func() {
+    fmt.Println("Goroutine 1")
+    wg.Done() // 操作完成，减少一个计数
+  }()
+  go func() {
+    fmt.Println("Goroutine 2")
+    wg.Done() // 操作完成，减少一个计数
+  }()
+  wg.Wait() // 等待，直到计数为0
 }
-
-func person2() {
- <-tongBu
- fmt.Println("person2")
- wg.Done()
-}
-
-func main() {
- wg.Add(2)
- // 目的:使用 channel 来实现 person1 先于 person2 执行
- go person2()
- go person1()
- defer close(tongBu)
- wg.Wait()
-}
-
 
 ```
 

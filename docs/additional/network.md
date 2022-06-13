@@ -35,8 +35,7 @@ TCP 数据传输慢,UDP 数据传输快
 
 1. 第一次握手:建立连接时,客户端发送 syn 包到服务器,并进入 SYN_SENT 状态,等待服务器确认;
 1. 第二次握手:服务器收到 syn 包,进行确认,同时自己也发送一个 SYN 包,即 SYN+ACK 包,此时服务器进入 SYN_RECV 状态.
-1. 第三次握手:客户端收到服务器的 SYN+ACK 包,向服务器发送确认包 ACK,客户端和服务器进入 ESTABLISHED状态,TCP 连接成功 完成三次握手
-1. 服务器收到 ACK 报文之后,三次握手建立完成.
+1. 第三次握手:客户端收到服务器的 SYN+ACK 包,客户端进入 ESTABLISHED状态,再次向服务器发送确认包 ACK,待服务器收到客户端发送的 ACK 包也会进入 ESTABLISHED 状态，完成三次握手。
 
 > SYN:同步序列编号(Synchronize Sequence Numbers)
 
@@ -45,9 +44,9 @@ TCP 数据传输慢,UDP 数据传输快
 ![20220405172830](https://raw.githubusercontent.com/kuro-tsuchi/my-picgo/master/md/img/20220405172830.png)
 
 1. TCP 客户端发送一个 FIN,用来关闭客户到服务器的数据传送.
-1. 服务器收到这个 FIN,它发回一个 ACK,确认序号为收到的序号加 1.和 SYN 一样,一个 FIN 将占用一个序号.
+1. 服务器收到这个 FIN,它发回一个 ACK
 1. 服务器关闭客户端的连接,发送一个 FIN 给客户端.
-1. 客户端发回 ACK 报文确认,并将确认序号设置为收到序号加 1.
+1. 客户端发回 ACK 报文确认
 
 ## 1.6. 什么是 WebSocket
 
